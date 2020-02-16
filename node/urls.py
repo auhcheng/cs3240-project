@@ -15,8 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls import include, url
+from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
+    url(r'^', include('dashboard.urls')),
+    url(r'^account/', include(('social_django.urls', 'dashboard'), namespace='social')),
+    url(r'^account/', include(('django.contrib.auth.urls', 'dashboard'), namespace='auth')),
+    url(r'^admin/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
-    path('admin/', admin.site.urls),
 ]
