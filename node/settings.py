@@ -15,6 +15,11 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
+TEMPLATE_DIRS = (
+    os.path.join(SETTINGS_PATH, 'templates'),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -37,7 +42,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dashboard',
+    'social_django',
 ]
+
+AUTHENTICATION_BACKENDS = (
+ 'social_core.backends.open_id.OpenIdAuth',
+ 'social_core.backends.google.GoogleOpenId',
+ 'social_core.backends.google.GoogleOAuth2',
+ 'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,6 +64,38 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.debug.debug',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'social.pipeline.debug.debug',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+'https://www.googleapis.com/auth/userinfo.email',
+'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+# Google+ SignIn (google-plus)
+SOCIAL_AUTH_GOOGLE_PLUS_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_GOOGLE_PLUS_SCOPE = [
+'https://www.googleapis.com/auth/plus.login',
+'https://www.googleapis.com/auth/userinfo.email',
+'https://www.googleapis.com/auth/userinfo.profile',]
+
+LOGIN_URL = '/account/login/'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '820427379208-h2ib18h1jqcp38h1b28mu5lp364sua7e.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'fQww9l3aNdeulCFq6AkQ_0Xe'
 
 ROOT_URLCONF = 'node.urls'
 
@@ -62,6 +110,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -105,7 +155,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
