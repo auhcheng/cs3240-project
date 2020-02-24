@@ -48,3 +48,5 @@ Also should be currently deployed at https://project-101-node.herokuapp.com/
 - Finish customizing the notification system
 - Make scheduling and organizing easy
 - Make the app easy to use in general
+
+I hope travis works..
