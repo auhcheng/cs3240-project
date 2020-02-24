@@ -1,0 +1,14 @@
+language: python
+python:
+- 3.8.1
+install:
+- pip install -r requirements.txt
+script:
+- python manage.py test
+deploy:
+  provider: heroku
+  api_key:
+    secure: C5QXAEa+YjQ10nw6bA+khlo8JLus7lEJ/hNmGUTqQBA2jVnOppeYc2Jh04Q4bqoMqSsadDQ75oZbQDlwP9kfySuIubsF1qnRgu+ttP356a4oA8fiic3r9xrU/3KcQ0iItA8EJVG4xDARIWoMx2r4Cp/nNQo4y4z/l1ef91NmxC/iEp9P7+CavSIHuQnCepcIZb0lM6vk7WU02OrqHW2HTK6vxw/iam8AkhjnzbFgHWJkwjBeP+ZVZJB5219PgC0Duq9wZ/lJvamPX8LV2x0O2ajduAhm34ypJ9JkKyzIzWjXMBRWnPHs25Fi54sqXXbJ7AiG/FsnGad6ngFRQa0X84+eSjUfoXOd8vC18piGjxgAUqt/kOXYDdNN5eDR1u3JtjxJ1JDlMz7iEQzvc6HVdr8EezXNvjTGkEtXOAIDeupznpwSZ2Yvrdcjt8zeao1mFYyhwOYbd4T3nWsaB78/RYAr5MtdFdDBR9MoM0GJ2yqIDgpVb6MSxfpn46JqE4TeWM8irpK2VmVbtF8rUyNrV0Bp9I9Br6ytKGQoxDmv2jma4Q/v48Nq6Y3bY0JABr71Ik0goDJrqLe2tD3CjTD2+/11y74RRNADChlKdosMslT8afXT0D6a8GEC/g6VIfhsfMGtsdXzETlBGx5HouFQ0l5IunkAeOeTDucBODzgvto=
+  app: project-101-node
+  on:
+    repo: uva-cs3240-s20/project-101-node
