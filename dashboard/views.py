@@ -8,10 +8,24 @@ from django.db import transaction
 from .models import Profile
 from .forms import UserForm,ProfileForm
 from django.contrib import messages
+import requests
 
 @login_required
 def Dashboard(request):
-    return render(request, 'dashboard/dashboard.html')
+    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+    city = 'Charlottesville'
+
+    r = requests.get(url.format(city)).json()
+
+    city_weather = {
+        'city': city,
+        'temperature': r['main']['temp'],
+        'description': r['weather'][0]['description'],
+        'icon': r['weather'][0]['icon'],
+    }
+
+    context = {'city_weather': city_weather}
+    return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
 @transaction.atomic
