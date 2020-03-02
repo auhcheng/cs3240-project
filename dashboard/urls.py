@@ -6,5 +6,4 @@ urlpatterns = [
     url(r'^$', views.Dashboard),
     url(r'^profile/$', views.update_profile),
     url(r'^account/logout/$', views.Logout),
-    path('weather/', views.weather, name='weather'),
 ]
