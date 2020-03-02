@@ -10,8 +10,7 @@ from .forms import UserForm,ProfileForm
 from django.contrib import messages
 import requests
 
-@login_required
-def Dashboard(request):
+def get_weather_context():
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
     city = 'Charlottesville'
 
@@ -25,6 +24,12 @@ def Dashboard(request):
     }
 
     context = {'city_weather': city_weather}
+
+    return context
+
+@login_required
+def Dashboard(request):
+    context = get_weather_context()
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
