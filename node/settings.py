@@ -17,8 +17,8 @@ import dotenv
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # This is new:
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
+dotenv_file = os.path.join(BASE_DIR, "db-to-use.txt")
+if 'HEROKU' not in os.environ:
     dotenv.load_dotenv(dotenv_file)
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
@@ -179,3 +179,5 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 if 'HEROKU' in os.environ:
     import django_heroku
     django_heroku.settings(locals())
+
+del DATABASES['default']['OPTIONS']['sslmode']
