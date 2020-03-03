@@ -16,6 +16,10 @@ import dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# This is new:
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 
@@ -127,7 +131,6 @@ WSGI_APPLICATION = 'node.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {}
-
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # Password validation
@@ -173,5 +176,6 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
-del DATABASES['default']['OPTIONS']['sslmode']
+if 'HEROKU' in os.environ:
+    import django_heroku
+    django_heroku.settings(locals())
