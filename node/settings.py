@@ -30,7 +30,7 @@ SECRET_KEY = '_tr+h63i!z#gbvl@&mdoz)agls(f9jdhzqi(r(iehajn%lp!$k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['project-101-node-test.herokuapp.com', 'localhost:8000', '127.0.0.1:8000']
+ALLOWED_HOSTS = ['project-101-node.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
