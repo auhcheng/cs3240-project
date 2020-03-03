@@ -31,6 +31,7 @@ SECRET_KEY = '_tr+h63i!z#gbvl@&mdoz)agls(f9jdhzqi(r(iehajn%lp!$k'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['project-101-node-test.herokuapp.com']
 
 
 # Application definition
