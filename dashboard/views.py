@@ -31,6 +31,7 @@ def get_weather_context():
 def Dashboard(request):
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
+    # context['todo_form'] = TodoForm()
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -52,6 +53,21 @@ def update_profile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+
+# def update_todo(request):
+#     if request.method == 'POST':
+#         todo_form = TodoForm(request.POST, instance=request.todo)
+#         if todo_form.is_valid():
+#             return HttpResponseRedirect('/')
+#         else:
+#             messages.error(request, ('Please enter a description for your task.'))
+#     else:
+#         todo_form = TodoForm(instance=request.todo)
+#     return render(request, 'dashboard/dashboard.html', {
+#         'user_form': user_form,
+#         'profile_form': profile_form,
+#         'todo_form': todo_form
+#     })
 
 def Logout(request):
     logout(request)

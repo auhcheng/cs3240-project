@@ -13,3 +13,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('bio','location','birth_date')
+
+# class TodoForm(forms.ModelForm):
+#     class Meta:
+#         model = Todo
+#         fields = ('task',)
