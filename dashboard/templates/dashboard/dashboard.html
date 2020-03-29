@@ -15,15 +15,13 @@
   <body>
       <section class="section">
           <div class="container">
-<!--              <form action="#" method="POST" role="form">-->
-<!--                  {% csrf_token %}-->
-<!--                  <div class="form-group">-->
-<!--                      {{ todo_form.task }}-->
-<!--                      <span class="input-group-btn">-->
-<!--                          <button type="submit" class="btn btn-default" id="add-btn">Add task</button>-->
-<!--                      </span>-->
-<!--                  </div>-->
-<!--              </form>-->
+              <form action="#" method="POST" role="form">
+                  {% csrf_token %}
+                  {{ todo_form.as_p }}
+                  <span class="input-group-btn">
+                      <button type="submit" class="btn btn-default" id="add-btn">Add task</button>
+                  </span>
+              </form>
               <ul>
                   {% for todo in todo_list %}
                     {% if user.username == todo.user %}

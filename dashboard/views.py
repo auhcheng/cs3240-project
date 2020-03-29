@@ -6,7 +6,8 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
-from .forms import UserForm,ProfileForm
+from .forms import UserForm,ProfileForm, TodoForm
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 import requests
 
@@ -54,20 +55,13 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
-# def update_todo(request):
-#     if request.method == 'POST':
-#         todo_form = TodoForm(request.POST, instance=request.todo)
-#         if todo_form.is_valid():
-#             return HttpResponseRedirect('/')
-#         else:
-#             messages.error(request, ('Please enter a description for your task.'))
-#     else:
-#         todo_form = TodoForm(instance=request.todo)
-#     return render(request, 'dashboard/dashboard.html', {
-#         'user_form': user_form,
-#         'profile_form': profile_form,
-#         'todo_form': todo_form
-#     })
+@login_required
+@require_POST
+def add_todo(request):
+    todo_form = TodoForm(request.POST)
+    print(request.POST['task'])
+    return HttpResponseRedirect('dashboard.dashboard.html')
+
 
 def Logout(request):
     logout(request)

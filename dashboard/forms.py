@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from dashboard.models import Profile
+from dashboard.models import Profile, Todo
 from django import forms
 
 class UserForm(forms.ModelForm):
@@ -14,7 +14,7 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('bio','location','birth_date')
 
-# class TodoForm(forms.ModelForm):
-#     class Meta:
-#         model = Todo
-#         fields = ('task',)
+class TodoForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ('task',)
