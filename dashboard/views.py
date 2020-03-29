@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
-from .models import Profile
+from .models import Profile, Todo
 from .forms import UserForm,ProfileForm
 from django.contrib import messages
 import requests
@@ -30,6 +30,7 @@ def get_weather_context():
 @login_required
 def Dashboard(request):
     context = get_weather_context()
+    todo_list = Todo.objects.order_by('id')
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required

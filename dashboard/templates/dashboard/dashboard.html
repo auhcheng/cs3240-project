@@ -15,6 +15,17 @@
   <body>
       <section class="section">
           <div class="container">
+              <ul>
+                  {% for todo in todo_list %}
+                    {% if todo.complete %}
+                        <li><del>{{ todo.task }}</del></li>
+                    {% else %}
+                        <li>{{ todo.task }}</li>
+                    {% endif %}
+                  {% endfor %}
+              </ul>
+          </div>
+          <div class="container">
               <div class="columns">
                   <div class="column is-offset-4 is-4">
                       <div class="box">
