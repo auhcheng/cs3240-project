@@ -30,7 +30,7 @@ def get_weather_context():
 @login_required
 def Dashboard(request):
     context = get_weather_context()
-    todo_list = Todo.objects.order_by('id')
+    context['todo_list'] = Todo.objects.order_by('id')
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
