@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
 from .forms import UserForm,ProfileForm, TodoForm
-from django.views.decorators.http import require_POST
 from django.contrib import messages
 import requests
 
@@ -33,6 +32,7 @@ def Dashboard(request):
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
     # context['todo_form'] = TodoForm()
+    context['todo_form'] = TodoForm()
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -56,11 +56,23 @@ def update_profile(request):
     })
 
 @login_required
-@require_POST
 def add_todo(request):
-    todo_form = TodoForm(request.POST)
-    print(request.POST['task'])
-    return HttpResponseRedirect('dashboard.dashboard.html')
+    if request.method == 'POST':
+        todo_form = TodoForm(request.POST)
+        if todo_form.is_valid():
+            temp_todo = todo_form.save(commit=False)
+            temp_todo.user = request.user
+            temp_todo.save()
+            todo_form.save_m2m()
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, ('Please correct the error.'))
+    else:
+        todo_form = TodoForm(instance=request.user.todo)
+    context = get_weather_context()
+    context['todo_list'] = Todo.objects.order_by('id')
+    context['todo_form'] = TodoForm()
+    return render(request, 'dashboard/dashboard.html', context)
 
 
 def Logout(request):
