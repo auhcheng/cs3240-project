@@ -29,11 +29,35 @@ def get_weather_context():
 
 @login_required
 def Dashboard(request):
-    context = get_weather_context()
-    context['todo_list'] = Todo.objects.order_by('id')
-    # context['todo_form'] = TodoForm()
-    context['todo_form'] = TodoForm()
-    return render(request, 'dashboard/dashboard.html', context)
+
+    # if the form has been filled out and sent to us as a POST request
+    if request.method == 'POST':
+
+        # read the form data from the POST request into a TodoForm
+        todo_form = TodoForm(request.POST)
+        if todo_form.is_valid():
+
+            # get the Todo instance from the TodoForm without saving
+            todo = todo_form.save(commit=False)
+
+            # set the user of this Todo to the current user
+            todo.user = request.user
+
+            todo.save()
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # create a blank form
+        todo_form = TodoForm()
+
+        # render everything as normal
+        context = get_weather_context()
+        context['todo_list'] = Todo.objects.order_by('id')
+        context['todo_form'] = TodoForm()
+        return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
 @transaction.atomic
