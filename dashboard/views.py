@@ -99,6 +99,30 @@ def add_todo(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
+@login_required
+def complete_todo(request, todo_id):
+    todo = Todo.objects.get(pk=todo_id)
+    if todo.complete: todo.complete = False
+    else: todo.complete = True
+    todo.save()
+
+    context = get_weather_context()
+    context['todo_list'] = Todo.objects.order_by('id')
+    context['todo_form'] = TodoForm()
+    return redirect("dashboard")
+
+
+@login_required
+def delete_complete(request):
+    Todo.objects.filter(complete__exact=True, user__exact=request.user).delete()
+    return redirect("dashboard")
+
+@login_required
+def delete_all(request):
+    Todo.objects.filter(user__exact=request.user).delete()
+    return redirect("dashboard")
+
+
 def Logout(request):
     logout(request)
     return HttpResponseRedirect('/')
