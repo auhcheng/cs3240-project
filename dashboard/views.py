@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
-from .models import Profile
-from .forms import UserForm,ProfileForm
+from .models import Profile, Todo
+from .forms import UserForm,ProfileForm, TodoForm
 from django.contrib import messages
 import requests
 
@@ -29,8 +29,35 @@ def get_weather_context():
 
 @login_required
 def Dashboard(request):
-    context = get_weather_context()
-    return render(request, 'dashboard/dashboard.html', context)
+
+    # if the form has been filled out and sent to us as a POST request
+    if request.method == 'POST':
+
+        # read the form data from the POST request into a TodoForm
+        todo_form = TodoForm(request.POST)
+        if todo_form.is_valid():
+
+            # get the Todo instance from the TodoForm without saving
+            todo = todo_form.save(commit=False)
+
+            # set the user of this Todo to the current user
+            todo.user = request.user
+
+            todo.save()
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # create a blank form
+        todo_form = TodoForm()
+
+        # render everything as normal
+        context = get_weather_context()
+        context['todo_list'] = Todo.objects.order_by('id')
+        context['todo_form'] = TodoForm()
+        return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
 @transaction.atomic
@@ -51,6 +78,50 @@ def update_profile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+
+@login_required
+def add_todo(request):
+    if request.method == 'POST':
+        todo_form = TodoForm(request.POST)
+        if todo_form.is_valid():
+            temp_todo = todo_form.save(commit=False)
+            temp_todo.user = request.user
+            temp_todo.save()
+            todo_form.save_m2m()
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, ('Please correct the error.'))
+    else:
+        todo_form = TodoForm(instance=request.user.todo)
+    context = get_weather_context()
+    context['todo_list'] = Todo.objects.order_by('id')
+    context['todo_form'] = TodoForm()
+    return render(request, 'dashboard/dashboard.html', context)
+
+
+@login_required
+def complete_todo(request, todo_id):
+    todo = Todo.objects.get(pk=todo_id)
+    if todo.complete: todo.complete = False
+    else: todo.complete = True
+    todo.save()
+
+    context = get_weather_context()
+    context['todo_list'] = Todo.objects.order_by('id')
+    context['todo_form'] = TodoForm()
+    return redirect("dashboard")
+
+
+@login_required
+def delete_complete(request):
+    Todo.objects.filter(complete__exact=True, user__exact=request.user).delete()
+    return redirect("dashboard")
+
+@login_required
+def delete_all(request):
+    Todo.objects.filter(user__exact=request.user).delete()
+    return redirect("dashboard")
+
 
 def Logout(request):
     logout(request)
