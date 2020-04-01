@@ -46,8 +46,8 @@
                 </div>
                   <div class="column is-offset-1 is-4">
                       <div class="box">
-                          <article class="media">
-                              <div class="media-left">
+                          <article class="media">                             
+                              <div class="media-left">                                  
                                   <figure class="image is-50x50">
                                       <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" alt="Image">
                                   </figure>
@@ -60,17 +60,27 @@
                                           <span class="subtitle">{{ city_weather.temperature }}° F</span>
                                           <br> {{ city_weather.description }}
                                       </p>
-                                  </div>
-                              </div>
+                                  </div>                                  
+                              </div>                              
                           </article>
                       </div>
+                      <!-- Embeds Calendar -->
+                      <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
                   </div>
               </div>
           </div>
       </section>
-  </body>
-  
-  </html>
- </div>
+  </body>  
+
+
+
+
+<script>
+    var base = "https://calendar.google.com/calendar/embed?src="
+    var email = '{{user.email}}'
+    var source = base + email
+    document.getElementById("displayCalendar").src = source
+</script>
+
 </div>
 {% endblock %}
