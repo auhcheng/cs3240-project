@@ -21,6 +21,37 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
+                              {{ note_form.title }}
+                              {{ note_form.body }}
+                            </div>
+                        </div>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" id="add-btn">Write note</button>
+                        </span>
+                    </form>
+                    <!-- <div class="btn-group">
+                        <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default" >Delete complete tasks</button></a>
+                        <a href="{% url 'delall' %}"><button type="button" class="btn btn-default" >Delete all tasks</button></a>
+                    </div> -->
+                    <ul>
+                        {% for note in note_list %}
+                          {% if user == note.user %}
+                              {% if not note.is_archived %}
+                                    {{ note.title }}
+                                    {{ note.body }}
+                              {% endif %}
+                              <!-- <div class="btn-group">
+                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>
+                              </div> -->
+                          {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="box">
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
                               {{ todo_form.task }}
                             </div>
                         </div>

@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
-from .models import Profile, Todo
-from .forms import UserForm, ProfileForm, TodoForm
+from .models import Profile, Todo, Note
+from .forms import UserForm, ProfileForm, TodoForm, NoteForm
 from django.contrib import messages
 import requests
 
@@ -35,6 +35,7 @@ def Dashboard(request):
 
         # read the form data from the POST request into a TodoForm
         todo_form = TodoForm(request.POST)
+        note_form = NoteForm(request.POST)
         if todo_form.is_valid():
 
             # get the Todo instance from the TodoForm without saving
@@ -45,6 +46,11 @@ def Dashboard(request):
 
             todo.save()
             return HttpResponseRedirect('/')
+        elif note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
@@ -52,11 +58,14 @@ def Dashboard(request):
 
         # create a blank form
         todo_form = TodoForm()
-
+        note_form = NoteForm()
         # render everything as normal
         context = get_weather_context()
         context['todo_list'] = Todo.objects.order_by('id')
         context['todo_form'] = TodoForm()
+
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()
         return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
