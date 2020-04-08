@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^account/logout/$', views.Logout, name="logout"),
     path('complete/<todo_id>', views.complete_todo, name="complete"),
     path('delcomp', views.delete_complete, name="delcomp"),
-    path('delall', views.delete_all, name="delall")
+    path('delall', views.delete_all, name="delall"),
+    path('del/<todo_id>', views.delete, name="del")
 ]

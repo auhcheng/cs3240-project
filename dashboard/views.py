@@ -91,8 +91,8 @@ def add_todo(request):
             return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error.'))
-    else:
-        todo_form = TodoForm(instance=request.user.todo)
+    # else:
+    #     todo_form = TodoForm(instance=request.user.todo)
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
     context['todo_form'] = TodoForm()
@@ -111,6 +111,11 @@ def complete_todo(request, todo_id):
     context['todo_form'] = TodoForm()
     return redirect("dashboard")
 
+@login_required
+def delete(request, todo_id):
+    todo = Todo.objects.get(pk=todo_id)
+    todo.delete()
+    return redirect("dashboard")
 
 @login_required
 def delete_complete(request):
