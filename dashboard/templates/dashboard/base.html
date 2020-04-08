@@ -6,16 +6,22 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
  <!-- Material icons -->
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head><title>Node</title>{% if user.is_authenticated %}<div class="navbar-fixed">
+</head><title>Node</title>{% if user.is_authenticated %}
+<div class="navbar-fixed">
     <nav class="blue">
         <div class="nav-wrapper container">
-            <a href="/" class="brand-logo center">Node</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <a href="/" class="brand-logo center">Node</a> 
+            <ul id="nav-mobile" class="left hide-on-med-and-down">                   
+               <li><a href="/"></a>{{user.first_name}}</a></li>
+                <li><a href="/">Dashboard</a></li>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">                
                 <li><a href="/account/logout">Log out</a></li>
             </ul>
         </div>
     </nav>
-</div>{% endif %}<div class="container">
+</div>
+{% endif %}<div class="container">
     {% block content %}
     {% endblock %}
 </div>

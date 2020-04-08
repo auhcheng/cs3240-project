@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
-from .forms import UserForm,ProfileForm, TodoForm
+from .forms import UserForm, ProfileForm, TodoForm
 from django.contrib import messages
 import requests
 
