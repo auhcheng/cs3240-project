@@ -17,15 +17,39 @@
   </head>
   
   <body>
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-              <div class="box">
-                  <form action="#" method="POST" role="form">
-                      {% csrf_token %}
-                      <div class="form-group">
-                          <div class="input-group">
-                            {{ todo_form.task }}
+      <section class="section">
+          <div class="container">
+              <div class="columns">
+                <div class="box">
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ note_form.title }}
+                              {{ note_form.body }}
+                            </div>
+                        </div>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" id="add-btn">Write note</button>
+                        </span>
+                    </form>
+                    <ul>
+                        {% for note in note_list %}
+                          {% if user == note.user %}
+                              {% if not note.is_archived %}
+                                    {{ note.title }}
+                                    {{ note.body }}
+                              {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="box">
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ todo_form.task }}
                           </div>
                       </div>
                       <span class="input-group-btn">
