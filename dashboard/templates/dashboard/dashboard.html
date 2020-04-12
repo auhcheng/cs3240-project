@@ -40,9 +40,9 @@
                               {% else %}
                                   <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a>
                               {% endif %}
-                              <div class="btn-group">
-                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>
-                              </div>
+<!--                              <div class="btn-group">-->
+<!--                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>-->
+<!--                              </div>-->
                           {% endif %}
                         {% endfor %}
                     </ul>
