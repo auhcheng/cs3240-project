@@ -36,9 +36,9 @@
                         {% for todo in todo_list %}
                           {% if user.username == todo.user %}
                               {% if todo.complete %}
-                                  <a href = "{% url 'complete' todo.id %}" ><li><del>{{ todo.task }}</del></li></a>
+                                  <a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a>
                               {% else %}
-                                  <a href = "{% url 'complete' todo.id %}"><li>{{ todo.task }}</li></a>
+                                  <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a>
                               {% endif %}
                               <div class="btn-group">
                                   <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>

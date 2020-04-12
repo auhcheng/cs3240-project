@@ -19,7 +19,7 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Todo(models.Model):
-    task = models.CharField(max_length=50, default="New task")
+    task = models.CharField(max_length=50, default="")
     complete = models.BooleanField(default=False)
     user = models.CharField(max_length=6, default="")
 

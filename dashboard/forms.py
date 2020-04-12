@@ -14,7 +14,7 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('bio','location','birth_date')
 
-class TodoForm(forms.ModelForm):
+class TodoFormText(forms.ModelForm):
     class Meta:
         model = Todo
         fields = ('task',)
