@@ -40,6 +40,7 @@
                         {% else %}
                             <a href="{% url 'complete' todo.id %}"><button type="button" class="btn btn-default" >Mark as complete</button></a>
                         {% endif %}
+                        <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete task</button></a>
                     </div>
                 </div>
               </div>
