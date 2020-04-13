@@ -91,7 +91,7 @@ def TaskPage(request, todo_id):
             # defaults and returns to original page
             todo_form_text = TodoFormText()
             todo_form_date = TodoFormDate()
-            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Nothing was updated."}
+            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Nothing was updated; try entering your date as mm/dd/yyyy hh:mm."}
             return render(request, 'dashboard/todo.html', context)
     else:  # GET request
         todo_form_text = TodoFormText()
