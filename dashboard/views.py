@@ -88,7 +88,11 @@ def TaskPage(request, todo_id):
             context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated due date!"}
             return render(request, 'dashboard/todo.html', context)
         else:
-            messages.error(request, ('This is not a valid.'))
+            # defaults and returns to original page
+            todo_form_text = TodoFormText()
+            todo_form_date = TodoFormDate()
+            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Nothing was updated."}
+            return render(request, 'dashboard/todo.html', context)
     else:  # GET request
         todo_form_text = TodoFormText()
         todo_form_date = TodoFormDate()
