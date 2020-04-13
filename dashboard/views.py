@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
-from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate
+from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate, TodoFormTextDate
 from django.contrib import messages
 import requests
 
@@ -35,7 +35,7 @@ def Dashboard(request):
     if request.method == 'POST':
 
         # read the form data from the POST request into a TodoFormText
-        todo_form = TodoFormText(request.POST)
+        todo_form = TodoFormTextDate(request.POST)
         if todo_form.is_valid():
 
             # get the Todo instance from the TodoFormText without saving
@@ -52,12 +52,12 @@ def Dashboard(request):
         # we are getting this page as a GET request
 
         # create a blank form
-        todo_form = TodoFormText()
+        todo_form = TodoFormTextDate()
 
         # render everything as normal
         context = get_weather_context()
         context['todo_list'] = Todo.objects.order_by('id')
-        context['todo_form'] = TodoFormText()
+        context['todo_form'] = todo_form
         return render(request, 'dashboard/dashboard.html', context)
 
 
@@ -133,7 +133,7 @@ def add_todo(request):
     #     todo_form = TodoFormText(instance=request.user.todo)
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
-    context['todo_form'] = TodoFormText()
+    context['todo_form'] = TodoFormTextDate()
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required

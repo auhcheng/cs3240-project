@@ -27,3 +27,9 @@ class TodoFormDate(forms.ModelForm):
     class Meta:
         model = Todo
         fields = ('due',)
+
+
+class TodoFormTextDate(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ('task', 'due',)

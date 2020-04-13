@@ -21,17 +21,21 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
-                              {{ todo_form.task }}
+                              Task: {{ todo_form.task }}
+                                <br>
+                              Due Date: {{ todo_form.due }}
                             </div>
                         </div>
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-default" id="add-btn">Add task</button>
                         </span>
                     </form>
+                    <br>
                     <div class="btn-group">
                         <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default" >Delete complete tasks</button></a>
                         <a href="{% url 'delall' %}"><button type="button" class="btn btn-default" >Delete all tasks</button></a>
                     </div>
+                    <br>
                     <div class="column">
                         <ul>
                             {% for todo in todo_list %}
