@@ -34,6 +34,17 @@
                             <button type="submit" class="btn btn-default" id="add-btn">Update name</button>
                         </span>
                     </form>
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ todo_form_date.due }}
+                            </div>
+                        </div>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" id="add-btn">Update due date</button>
+                        </span>
+                    </form>
                     <div class="btn-group">
                         {% if todo.complete %}
                             <a href="{% url 'complete' todo.id %}"><button type="button" class="btn btn-default" >Mark as incomplete</button></a>

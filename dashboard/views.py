@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
-from .forms import UserForm, ProfileForm, TodoFormText
+from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate
 from django.contrib import messages
 import requests
 
@@ -65,6 +65,7 @@ def Dashboard(request):
 def TaskPage(request, todo_id):
     if request.method == 'POST':
         todo_form_text = TodoFormText(request.POST)
+        todo_form_date = TodoFormDate(request.POST)
         if todo_form_text.is_valid():  # valid data
             # update todo in question
             todo = Todo.objects.get(pk=todo_id)
@@ -73,13 +74,25 @@ def TaskPage(request, todo_id):
 
             # defaults and returns to original page
             todo_form_text = TodoFormText()
-            context = {'todo_form_text': todo_form_text, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated task name!"}
+            todo_form_date = TodoFormDate()
+            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated task name!"}
+            return render(request, 'dashboard/todo.html', context)
+        elif todo_form_date.is_valid():
+            todo = Todo.objects.get(pk=todo_id)
+            todo_form_date = TodoFormDate(request.POST, instance=todo)
+            todo_form_date.save()
+
+            # defaults and returns to original page
+            todo_form_text = TodoFormText()
+            todo_form_date = TodoFormDate()
+            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated due date!"}
             return render(request, 'dashboard/todo.html', context)
         else:
-            messages.error(request, ('This is not a valid task.'))
+            messages.error(request, ('This is not a valid.'))
     else:  # GET request
         todo_form_text = TodoFormText()
-        context = {'todo_form_text': todo_form_text, 'todo': Todo.objects.get(pk=todo_id), 'update': ""}
+        todo_form_date = TodoFormDate()
+        context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': ""}
         return render(request, 'dashboard/todo.html', context)
 
 
@@ -122,7 +135,6 @@ def add_todo(request):
     context['todo_list'] = Todo.objects.order_by('id')
     context['todo_form'] = TodoFormText()
     return render(request, 'dashboard/dashboard.html', context)
-
 
 @login_required
 def complete_todo(request, todo_id):

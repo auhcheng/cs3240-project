@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+import datetime
+from django.utils import timezone
+
 class Profile(models.Model):
     user = models.OneToOneField(User,unique=True, null=False, db_index=True, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
@@ -22,6 +25,7 @@ class Todo(models.Model):
     task = models.CharField(max_length=50, default="")
     complete = models.BooleanField(default=False)
     user = models.CharField(max_length=6, default="")
+    due = models.DateTimeField(default=timezone.now()+datetime.timedelta(days=7))  # a week from now
 
     def __str__(self):
         return self.task

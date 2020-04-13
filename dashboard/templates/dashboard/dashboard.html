@@ -32,20 +32,22 @@
                         <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default" >Delete complete tasks</button></a>
                         <a href="{% url 'delall' %}"><button type="button" class="btn btn-default" >Delete all tasks</button></a>
                     </div>
-                    <ul>
-                        {% for todo in todo_list %}
-                          {% if user.username == todo.user %}
-                              {% if todo.complete %}
-                                  <a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a>
-                              {% else %}
-                                  <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a>
-                              {% endif %}
+                    <div class="column">
+                        <ul>
+                            {% for todo in todo_list %}
+                                {% if user.username == todo.user %}
+                                    {% if todo.complete %}
+                                        {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a><br>
+                                    {% else %}
+                                        {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a><br>
+                                    {% endif %}
 <!--                              <div class="btn-group">-->
 <!--                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>-->
 <!--                              </div>-->
-                          {% endif %}
-                        {% endfor %}
-                    </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
                   <div class="column is-offset-1 is-4">
                       <div class="box">

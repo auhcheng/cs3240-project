@@ -4,17 +4,26 @@ from django.contrib.auth.models import User
 from dashboard.models import Profile, Todo
 from django import forms
 
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
 
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('bio','location','birth_date')
+        fields = ('bio', 'location', 'birth_date')
+
 
 class TodoFormText(forms.ModelForm):
     class Meta:
         model = Todo
         fields = ('task',)
+
+
+class TodoFormDate(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ('due',)
