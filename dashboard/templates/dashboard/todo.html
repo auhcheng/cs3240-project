@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}<div class='row'>
+ <div class='col s12 m6 offset-m3' style="text-align:center">
+  <H3>Looking at: {{ todo.task }}</H3>
+  <H3>{{ update }}</H3>
+  <html lang="en">
+
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Document</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
+  </head>
+
+  <body>
+      <section class="section">
+          <div class="container">
+              <div class="columns">
+                <div class="box">
+                    {% if todo.complete %}
+                        <span class="title">Update here; currently complete</span>
+                    {% else %}
+                        <span class="title">Update here; currently incomplete</span>
+                    {% endif %}
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ todo_form_text.task }}
+                            </div>
+                        </div>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" id="add-btn">Update name</button>
+                        </span>
+                    </form>
+                    <form action="#" method="POST" role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                Due Date: <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                    {{ todo_form_date.due }}
+                                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                  </div>
+                                  
+                                  <script>
+                                    $(function () {
+                                      $("#datetimepicker1").datetimepicker({
+                                        format: 'DD/MM/YYYY HH:mm',
+                                      });
+                                    });
+                                  </script>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" id="add-btn">Update due date</button>
+                        </span>
+                    </form>
+                    <div class="btn-group">
+                        {% if todo.complete %}
+                            <a href="{% url 'complete' todo.id %}"><button type="button" class="btn btn-default" >Mark as incomplete</button></a>
+                        {% else %}
+                            <a href="{% url 'complete' todo.id %}"><button type="button" class="btn btn-default" >Mark as complete</button></a>
+                        {% endif %}
+                        <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete task</button></a>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </section>
+  </body>
+
+
+
+
+<script>
+    var email = '{{user.email}}'
+    var source = base + email
+</script>
+
+</div>
+{% endblock %}

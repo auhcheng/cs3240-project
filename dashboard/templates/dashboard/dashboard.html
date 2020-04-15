@@ -1,117 +1,100 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
-
-<body style="background-color:#F7F9F9">
-<div class='row'>
-<div>
- <!-- <div class='col s12 m6 offset-m3' style="text-align:center"> -->
-  <!-- <H3>Hi {{ user.first_name }}!</H3> -->
-  <html lang="en">
   
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>Document</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
-  </head>
-  
-  <body>
-      <section class="section">
-          <div class="container">
-              <div class="columns">
-                <div class="box">
+<body>
+<div class="container">
+    <div class="row justify-content-center align-items-center"><H3>Hi {{ user.first_name }}!</H3></div>
+    <div class="row">
+        <div class="col-8">
+            <!-- Embeds Calendar -->
+            <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class='col-4'>
+            <div class='row h-20'>
+                <!-- Weather -->
+                <div class="col card card-body">
+                    <div class="media">
+                        <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" class="align-self-center mr-3" alt="Image">
+                        <div class="media-body">
+                            <h3 class="mt-0">{{ city_weather.city }}</h5>
+                            <p class="font-weight-light">{{ city_weather.temperature }}° F</p>
+                            <p class="font-weight-light">{{ city_weather.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row h-40'>
+                <!-- Todos -->
+                <div class="col card card-body">
+                    <!-- Input Form -->
                     <form action="#" method="POST" role="form">
                         {% csrf_token %}
                         <div class="form-group">
-                            <div class="input-group">
-                              {{ note_form.title }}
-                              {{ note_form.body }}
-                            </div>
+                            <div class="input-group">{{ todo_form.task }}</div>
                         </div>
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default" id="add-btn">Write note</button>
-                        </span>
+                        <div class="form-group">
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                {{ todo_form.due }}
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                            <script>
+                                $(function () {
+                                $("#datetimepicker1").datetimepicker({
+                                    format: 'DD/MM/YYYY HH:mm',
+                                });
+                                });
+                            </script>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary mb-2" id="add-btn">Add task</button>
+                        </div>
                     </form>
-                    <ul>
-                        {% for note in note_list %}
-                          {% if user == note.user %}
-                              {% if not note.is_archived %}
-                                    {{ note.title }}
-                                    {{ note.body }}
-                              {% endif %}
-                          {% endif %}
+
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-secondary">Delete complete tasks</button></a>
+                        <a href="{% url 'delall' %}"><button type="button" class="btn btn-secondary">Delete all tasks</button></a>
+                    </div>
+
+                    <!-- Todo List -->
+                    <ul class="list-group">
+                        {% for todo in todo_list %}
+                            {% if user.username == todo.user %}
+                                {% if todo.complete %}
+                                    <a href="{% url 'taskpage' todo.id %}" class="list-group-item list-group-item-action">
+                                        <del>
+                                            <div class="row">
+                                                {{ todo.task }}
+                                            </div>
+                                            <div class="row">
+                                                due {{ todo.due }}
+                                            </div>
+                                        </del>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'taskpage' todo.id %}" class="list-group-item list-group-item-action">
+                                        <div class="row">
+                                            {{ todo.task }}
+                                        </div>
+                                        <div class="row">
+                                            due {{ todo.due }}
+                                        </div>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="box">
-                    <form action="#" method="POST" role="form">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <div class="input-group">
-                              {{ todo_form.task }}
-                          </div>
-                      </div>
-                      <span class="input-group-btn">
-                          <button type="submit" class="btn btn-default" id="add-btn">Add task</button>
-                      </span>
-                  </form>                  
-                  <div class="btn-group">
-                      <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default">Delete complete tasks</button></a>
-                      <a href="{% url 'delall' %}"><button type="button" style='padding-bottom: 30px' class="btn btn-default">Delete all tasks</button></a>
-                  </div>                
-                  <br>
-                  <ul>
-                      {% for todo in todo_list %}
-                        {% if user.username == todo.user %}
-                            {% if todo.complete %}
-                                <div style="float:left"><a href = "{% url 'complete' todo.id %}" ><li><del>{{ todo.task }}</del></li></a></div>
-                                <div style="float:right"><a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete</button></a></div>
-                                <div style="clear:both"/>
-                                
-                            {% else %}
-                                <div style="float:left"><a href = "{% url 'complete' todo.id %}"><li>{{ todo.task }}</li></a></div>
-                                <div style="float:right"><a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete</button></a></div>
-                                <div style="clear:both"/>
-                                
-                            {% endif %}
-                            <!-- <div class="btn-group">
-                                <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>
-                            </div> -->
-                        {% endif %}
-                      {% endfor %}
-                  </ul>
-              </div>
-                <div class="column is-offset-1 is-4">
-                    <div class="box">
-                        <article class="media">                             
-                            <div class="media-left">                                  
-                                <figure class="image is-50x50">
-                                    <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" alt="Image">
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <div class="content">
-                                    <p>
-                                        <span class="title">{{ city_weather.city }}</span>
-                                        <br>
-                                        <span class="subtitle">{{ city_weather.temperature }}° F</span>
-                                        <br> {{ city_weather.description }}
-                                    </p>
-                                </div>                                  
-                            </div>                              
-                        </article>
-                    </div>
-                    <!-- Embeds Calendar -->
-                    <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+            </div>
+            <div class="row h-40">
+                <div class="col card card-body">
+                    notes
                 </div>
             </div>
         </div>
-    </section>
-</body>    
-
-
-
+    </div>
+</div>
 
 <script>
     var base = "https://calendar.google.com/calendar/embed?src="
@@ -120,7 +103,5 @@
     document.getElementById("displayCalendar").src = source
 </script>
 
-</div>
 </body>
-<!-- </div> -->
 {% endblock %}
