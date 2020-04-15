@@ -105,11 +105,6 @@ def Dashboard(request):
 
             todo.save()
             return HttpResponseRedirect('/')
-        elif note_form.is_valid():
-            note = note_form.save(commit=False)
-            note.user = request.user
-            note.save()
-            return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
