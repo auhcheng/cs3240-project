@@ -3,6 +3,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from dashboard.models import Profile, Todo, Note, Event
 from django import forms
+from .widgets import BootstrapDateTimePickerInput
 
 
 class UserForm(forms.ModelForm):
@@ -30,13 +31,9 @@ class TodoFormDate(forms.ModelForm):
 
 
 class TodoFormTextDate(forms.ModelForm):
-    
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker1'
-        })
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
     class Meta:
         model = Todo
@@ -44,7 +41,7 @@ class TodoFormTextDate(forms.ModelForm):
         widgets = {
             'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
         }
-        
+
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
@@ -53,16 +50,12 @@ class NoteForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker1'
-        }))
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
+    )
     end_time = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker2'
-        }))
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
+    )
 
     class Meta:
         model = Event
