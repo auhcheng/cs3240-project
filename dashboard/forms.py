@@ -30,8 +30,6 @@ class TodoFormDate(forms.ModelForm):
 
 
 class TodoFormTextDate(forms.ModelForm):
-    task = forms.CharField(label='task', 
-        widget=forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}))
     
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
@@ -43,7 +41,10 @@ class TodoFormTextDate(forms.ModelForm):
     class Meta:
         model = Todo
         fields = ('task', 'due',)
-
+        widgets = {
+            'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
+        }
+        
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
@@ -60,7 +61,7 @@ class EventForm(forms.ModelForm):
         input_formats=['%d/%m/%Y %H:%M'],
         widget=forms.DateTimeInput(attrs={
             'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker1'
+            'data-target': '#datetimepicker2'
         }))
 
     class Meta:
