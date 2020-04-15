@@ -10,10 +10,9 @@ from .models import Profile, Todo
 from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate, TodoFormTextDate
 from django.contrib import messages
 import requests
-import datetime
 from django.utils import timezone
 
-
+import datetime
 from datetime import datetime, timedelta, date
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -43,7 +42,7 @@ def get_date(req_month):
     if req_month:
         year, month = (int(x) for x in req_month.split('-'))
         return date(year, month, day=1)
-    return datetime.today()
+    return datetime.datetime.today()
 
 def prev_month(d):
     first = d.replace(day=1)
