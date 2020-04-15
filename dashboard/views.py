@@ -85,7 +85,7 @@ def edit_todo(request, todo_id=None):
 
     if request.POST and form.is_valid():
         form.save()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('todolist'))
     
     return render(request, 'dashboard/todo.html', {'form': form})
 
@@ -125,7 +125,7 @@ def TodosPage(request):
 
         # read the form data from the POST request into a TodoFormText
         todo_form = TodoForm(request.POST)
-        
+
         if todo_form.is_valid():
             # get the Todo instance from the TodoFormText without saving
             todo = todo_form.save(commit=False)
