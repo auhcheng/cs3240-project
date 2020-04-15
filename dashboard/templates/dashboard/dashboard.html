@@ -1,95 +1,100 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
-<div class='row'>
- <div class='col s12 m6 offset-m3' style="text-align:center">
-  <H3>Hi {{ user.first_name }}!</H3>
-  <html lang="en">
   
-  <body>
-      <section class="section">
-          <div class="container">
-              <div class="columns">
-                <div class="box">
+<body>
+<div class="container">
+    <div class="row justify-content-center align-items-center"><H3>Hi {{ user.first_name }}!</H3></div>
+    <div class="row">
+        <div class="col-8">
+            <!-- Embeds Calendar -->
+            <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class='col-4'>
+            <div class='row h-20'>
+                <!-- Weather -->
+                <div class="col card card-body">
+                    <div class="media">
+                        <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" class="align-self-center mr-3" alt="Image">
+                        <div class="media-body">
+                            <h3 class="mt-0">{{ city_weather.city }}</h5>
+                            <p class="font-weight-light">{{ city_weather.temperature }}° F</p>
+                            <p class="font-weight-light">{{ city_weather.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row h-40'>
+                <!-- Todos -->
+                <div class="col card card-body">
+                    <!-- Input Form -->
                     <form action="#" method="POST" role="form">
                         {% csrf_token %}
                         <div class="form-group">
-                            <div class="input-group">
-                              Task: {{ todo_form.task }}
-                                <br>
-                              Due Date:
-                              <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                            <div class="input-group">{{ todo_form.task }}</div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
                                 {{ todo_form.due }}
                                 <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
-                              </div>
-                              
-                              <script>
-                                $(function () {
-                                  $("#datetimepicker1").datetimepicker({
-                                    format: 'DD/MM/YYYY HH:mm',
-                                  });
-                                });
-                              </script>
                             </div>
+                            <script>
+                                $(function () {
+                                $("#datetimepicker1").datetimepicker({
+                                    format: 'DD/MM/YYYY HH:mm',
+                                });
+                                });
+                            </script>
                         </div>
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default" id="add-btn">Add task</button>
-                        </span>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary mb-2" id="add-btn">Add task</button>
+                        </div>
                     </form>
-                    <br>
-                    <div class="btn-group">
-                        <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default" >Delete complete tasks</button></a>
-                        <a href="{% url 'delall' %}"><button type="button" class="btn btn-default" >Delete all tasks</button></a>
+
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-secondary">Delete complete tasks</button></a>
+                        <a href="{% url 'delall' %}"><button type="button" class="btn btn-secondary">Delete all tasks</button></a>
                     </div>
-                    <br>
-                    <div class="column">
-                        <ul>
-                            {% for todo in todo_list %}
-                                {% if user.username == todo.user %}
-                                    {% if todo.complete %}
-                                        {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a><br>
-                                    {% else %}
-                                        {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a><br>
-                                    {% endif %}
-<!--                              <div class="btn-group">-->
-<!--                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>-->
-<!--                              </div>-->
+
+                    <!-- Todo List -->
+                    <ul class="list-group">
+                        {% for todo in todo_list %}
+                            {% if user.username == todo.user %}
+                                {% if todo.complete %}
+                                    <a href="{% url 'taskpage' todo.id %}" class="list-group-item list-group-item-action">
+                                        <del>
+                                            <div class="row">
+                                                {{ todo.task }}
+                                            </div>
+                                            <div class="row">
+                                                due {{ todo.due }}
+                                            </div>
+                                        </del>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'taskpage' todo.id %}" class="list-group-item list-group-item-action">
+                                        <div class="row">
+                                            {{ todo.task }}
+                                        </div>
+                                        <div class="row">
+                                            due {{ todo.due }}
+                                        </div>
+                                    </a>
                                 {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
                 </div>
-                  <div class="column is-offset-1 is-4">
-                      <div class="box">
-                          <article class="media">                             
-                              <div class="media-left">                                  
-                                  <figure class="image is-50x50">
-                                      <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" alt="Image">
-                                  </figure>
-                              </div>
-                              <div class="media-content">
-                                  <div class="content">
-                                      <p>
-                                          <span class="title">{{ city_weather.city }}</span>
-                                          <br>
-                                          <span class="subtitle">{{ city_weather.temperature }}° F</span>
-                                          <br> {{ city_weather.description }}
-                                      </p>
-                                  </div>                                  
-                              </div>                              
-                          </article>
-                      </div>
-                      <!-- Embeds Calendar -->
-                      <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
-                  </div>
-              </div>
-          </div>
-      </section>
-  </body>  
-
-
-
+            </div>
+            <div class="row h-40">
+                <div class="col card card-body">
+                    notes
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     var base = "https://calendar.google.com/calendar/embed?src="
@@ -98,5 +103,5 @@
     document.getElementById("displayCalendar").src = source
 </script>
 
-</div>
+</body>
 {% endblock %}

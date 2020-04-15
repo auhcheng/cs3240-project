@@ -30,6 +30,9 @@ class TodoFormDate(forms.ModelForm):
 
 
 class TodoFormTextDate(forms.ModelForm):
+    task = forms.CharField(label='task', 
+        widget=forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}))
+    
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
         widget=forms.DateTimeInput(attrs={
