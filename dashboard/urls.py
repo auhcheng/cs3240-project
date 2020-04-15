@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^calendar/$', views.CalendarView.as_view(), name='calendar'),
     url(r'^event/new/$', views.event, name='event_new'),
     url(r'^event/edit/(?P<event_id>\d+)/$', views.event, name='event_edit'),
-    path('task/<todo_id>', views.TaskPage, name="taskpage"),
+    path('task/<todo_id>', views.edit_todo, name="taskpage"),
 ]

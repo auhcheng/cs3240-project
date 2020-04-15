@@ -18,26 +18,14 @@ class ProfileForm(forms.ModelForm):
         fields = ('bio', 'location', 'birth_date')
 
 
-class TodoFormText(forms.ModelForm):
-    class Meta:
-        model = Todo
-        fields = ('task',)
-
-
-class TodoFormDate(forms.ModelForm):
-    class Meta:
-        model = Todo
-        fields = ('due',)
-
-
-class TodoFormTextDate(forms.ModelForm):
+class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
         widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
     class Meta:
         model = Todo
-        fields = ('task', 'due',)
+        fields = ('task', 'due', 'complete')
         widgets = {
             'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
         }
