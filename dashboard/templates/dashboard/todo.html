@@ -51,6 +51,14 @@
         <span>Notes</span></a>
     </li>            
 
+      <!-- Nav Item - Calendar -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'calendar'%}">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Calendars</span></a>
+      </li>            
+    
+
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
       <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -82,7 +90,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-bell fa-fw"></i>
               <!-- Counter - Alerts -->
-              <span class="badge badge-danger badge-counter">3+</span>
+              <!-- <span class="badge badge-danger badge-counter">3+</span> -->
             </a>
             <!-- Dropdown - Alerts -->
             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
@@ -189,10 +197,21 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
-                              {{ todo_form_date.due }}
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default" id="add-btn">Update due date</button>
-                                </span>
+                                Due Date: <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                    {{ todo_form_date.due }}
+                                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                  </div>
+                                  
+                                  <script>
+                                    $(function () {
+                                      $("#datetimepicker1").datetimepicker({
+                                        format: 'DD/MM/YYYY HH:mm',
+                                      });
+                                    });
+                                  </script>
+                                </div>
                             </div>
                         </div>
                     </form>
