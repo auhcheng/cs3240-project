@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .views import get_weather_context, add_todo, complete_todo, delete_complete, delete_all, Dashboard
 
-from .forms import TodoFormTextDate, TodoFormDate, TodoFormText
+from .forms import TodoForm
 from .models import Todo
 import datetime, pytz
 from django.utils import timezone
@@ -40,7 +40,7 @@ class DashboardTests(TestCase):
 
     # fills in task form with something
     def test_valid_todo_textdate_form(self):
-        form = TodoFormTextDate({'task': "task", "due": "05/01/2020 12:00"})
+        form = TodoForm({'task': "task", "due": "05/01/2020 12:00"})
         self.assertTrue(form.is_valid())
         task = form.save()
         self.assertEqual(task.task, "task")
@@ -50,11 +50,11 @@ class DashboardTests(TestCase):
 
     # checks if updating a task's text works
     def test_valid_todo_text_form(self):
-        form = TodoFormTextDate({'task': "task", "due": "05/01/2020 12:00"})
+        form = TodoForm({'task': "task", "due": "05/01/2020 12:00"})
         self.assertTrue(form.is_valid())
         task = form.save()
-        text_form = TodoFormText({'task':"altered task"}, instance=task)
-        text_form.save();
+        text_form = TodoForm({'task': "altered task", "due": "05/01/2020 12:00"}, instance=task)
+        text_form.save()
         self.assertEqual(task.task, "altered task")
 
     # # checks if updating a task's due date works
@@ -71,19 +71,19 @@ class DashboardTests(TestCase):
 
     # checks if blank form is valid
     def test_invalid_todo_textdate_form(self):
-        form = TodoFormTextDate({'task': "", "due": "05/01/2020 12:00"})
+        form = TodoForm({'task': "", "due": "05/01/2020 12:00"})
         self.assertFalse(form.is_valid())
-        form = TodoFormTextDate({'task': "test", "due": ""})
+        form = TodoForm({'task': "test", "due": ""})
         self.assertFalse(form.is_valid())
 
     # checks if blank form is valid
     def test_invalid_todo_text_form(self):
-        form = TodoFormText({'task': ""})
+        form = TodoForm({'task': ""})
         self.assertFalse(form.is_valid())
 
     # checks if blank form is valid
     def test_invalid_todo_date_form(self):
-        form = TodoFormDate({"due": ""})
+        form = TodoForm({"due": ""})
         self.assertFalse(form.is_valid())
 
     # adds task to database

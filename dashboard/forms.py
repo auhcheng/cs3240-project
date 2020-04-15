@@ -3,6 +3,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from dashboard.models import Profile, Todo, Note, Event
 from django import forms
+from .widgets import BootstrapDateTimePickerInput
 
 
 class UserForm(forms.ModelForm):
@@ -17,32 +18,17 @@ class ProfileForm(forms.ModelForm):
         fields = ('bio', 'location', 'birth_date')
 
 
-class TodoFormText(forms.ModelForm):
-    class Meta:
-        model = Todo
-        fields = ('task',)
-
-
-class TodoFormDate(forms.ModelForm):
-    class Meta:
-        model = Todo
-        fields = ('due',)
-
-
-class TodoFormTextDate(forms.ModelForm):
-    task = forms.CharField(label='task', 
-        widget=forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}))
-    
+class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M'],
-        widget=forms.DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'data-target': '#datetimepicker1'
-        })
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
     class Meta:
         model = Todo
-        fields = ('task', 'due',)
+        fields = ('task', 'due', 'complete')
+        widgets = {
+            'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
+        }
 
 class NoteForm(forms.ModelForm):
     class Meta:
@@ -50,18 +36,19 @@ class NoteForm(forms.ModelForm):
         fields = ('title', 'body')
 
 class EventForm(forms.ModelForm):
-  class Meta:
-    model = Event
-    # datetime-local is a HTML5 input type, format to make date time show on fields
-    widgets = {
-      'start_time': forms.DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-      'end_time': forms.DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-    }
-    fields = '__all__'
+    start_time = forms.DateTimeField(
+        input_formats=['%d/%m/%Y %H:%M'],
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
+    )
+    end_time = forms.DateTimeField(
+        input_formats=['%d/%m/%Y %H:%M'],
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
+    )
 
-  def __init__(self, *args, **kwargs):
-    super(EventForm, self).__init__(*args, **kwargs)
-    # input_formats parses HTML5 datetime-local input to datetime field
-    self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
-    self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)
-
+    class Meta:
+        model = Event
+        fields = ('title', 'description', 'start_time', 'end_time')
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }

@@ -7,13 +7,12 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo
-from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate, TodoFormTextDate
+from .forms import UserForm, ProfileForm, TodoForm
 from django.contrib import messages
 import requests
-import datetime
 from django.utils import timezone
 
-
+import datetime
 from datetime import datetime, timedelta, date
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -28,6 +27,8 @@ from .forms import EventForm
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'dashboard/calendar.html'
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -43,7 +44,7 @@ def get_date(req_month):
     if req_month:
         year, month = (int(x) for x in req_month.split('-'))
         return date(year, month, day=1)
-    return datetime.today()
+    return datetime.datetime.today()
 
 def prev_month(d):
     first = d.replace(day=1)
@@ -58,6 +59,7 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
+@login_required
 def event(request, event_id=None):
     instance = Event()
     if event_id:
@@ -66,11 +68,25 @@ def event(request, event_id=None):
         instance = Event()
 
     form = EventForm(request.POST or None, instance=instance)
+
     if request.POST and form.is_valid():
-        form.save()
+        event = form.save(commit=False)
+        event.user = request.user
+        event.save()
         return HttpResponseRedirect(reverse('calendar'))
     return render(request, 'dashboard/event.html', {'form': form})
 
+@login_required
+def edit_todo(request, todo_id=None):
+    instance = get_object_or_404(Todo, pk=todo_id)
+
+    form = TodoForm(request.POST or None, instance=instance)
+
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/')
+    
+    return render(request, 'dashboard/todo.html', {'form': form})
 
 def get_weather_context():
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
@@ -94,7 +110,7 @@ def Dashboard(request):
     if request.method == 'POST':
 
         # read the form data from the POST request into a TodoFormText
-        todo_form = TodoFormTextDate(request.POST)
+        todo_form = TodoForm(request.POST)
         
         if todo_form.is_valid():
 
@@ -105,11 +121,6 @@ def Dashboard(request):
             todo.user = request.user
 
             todo.save()
-            return HttpResponseRedirect('/')
-        elif note_form.is_valid():
-            note = note_form.save(commit=False)
-            note.user = request.user
-            note.save()
             return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
@@ -147,7 +158,7 @@ def Dashboard(request):
         # print(response)
 
         # create a blank form
-        todo_form = TodoFormTextDate()
+        todo_form = TodoForm()
 
         # render everything as normal
         context = get_weather_context()
@@ -155,45 +166,6 @@ def Dashboard(request):
         context['todo_form'] = todo_form
 
         return render(request, 'dashboard/dashboard.html', context)
-
-
-@login_required
-def TaskPage(request, todo_id):
-    if request.method == 'POST':
-        todo_form_text = TodoFormText(request.POST)
-        todo_form_date = TodoFormDate(request.POST)
-        if todo_form_text.is_valid():  # valid data
-            # update todo in question
-            todo = Todo.objects.get(pk=todo_id)
-            todo_form_text = TodoFormText(request.POST, instance=todo)
-            todo_form_text.save()
-
-            # defaults and returns to original page
-            todo_form_text = TodoFormText()
-            todo_form_date = TodoFormDate()
-            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated task name!"}
-            return render(request, 'dashboard/todo.html', context)
-        elif todo_form_date.is_valid():
-            todo = Todo.objects.get(pk=todo_id)
-            todo_form_date = TodoFormDate(request.POST, instance=todo)
-            todo_form_date.save()
-
-            # defaults and returns to original page
-            todo_form_text = TodoFormText()
-            todo_form_date = TodoFormDate()
-            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Updated due date!"}
-            return render(request, 'dashboard/todo.html', context)
-        else:
-            # defaults and returns to original page
-            todo_form_text = TodoFormText()
-            todo_form_date = TodoFormDate()
-            context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': "Nothing was updated; try entering your date as mm/dd/yyyy hh:mm."}
-            return render(request, 'dashboard/todo.html', context)
-    else:  # GET request
-        todo_form_text = TodoFormText()
-        todo_form_date = TodoFormDate()
-        context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': ""}
-        return render(request, 'dashboard/todo.html', context)
 
 
 @login_required
@@ -220,7 +192,7 @@ def update_profile(request):
 @login_required
 def add_todo(request):
     if request.method == 'POST':
-        todo_form = TodoFormText(request.POST)
+        todo_form = TodoForm(request.POST)
         if todo_form.is_valid():
             temp_todo = todo_form.save(commit=False)
             temp_todo.user = request.user
@@ -233,7 +205,7 @@ def add_todo(request):
     #     todo_form = TodoFormText(instance=request.user.todo)
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
-    context['todo_form'] = TodoFormTextDate()
+    context['todo_form'] = TodoForm()
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -247,8 +219,8 @@ def complete_todo(request, todo_id):
         update = "Now complete!"
     todo.save()
 
-    todo_form_text = TodoFormText()
-    context = {'todo_form_text': todo_form_text, 'todo': Todo.objects.get(pk=todo_id), 'update': update}
+    todo_form = TodoForm()
+    context = {'form': todo_form, 'update': update}
     return render(request, 'dashboard/todo.html', context)
 
 
