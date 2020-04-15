@@ -1,3 +1,4 @@
+from __future__ import print_function
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -9,6 +10,66 @@ from .models import Profile, Todo
 from .forms import UserForm, ProfileForm, TodoFormText, TodoFormDate, TodoFormTextDate
 from django.contrib import messages
 import requests
+import datetime
+from django.utils import timezone
+
+
+from datetime import datetime, timedelta, date
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views import generic
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+import calendar
+from .models import *
+from .utils import Calendar
+from .forms import EventForm
+
+class CalendarView(generic.ListView):
+    model = Event
+    template_name = 'dashboard/calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        d = get_date(self.request.GET.get('month', None))
+        cal = Calendar(d.year, d.month)
+        html_cal = cal.formatmonth(withyear=True)
+        context['calendar'] = mark_safe(html_cal)
+        context['prev_month'] = prev_month(d)
+        context['next_month'] = next_month(d)
+        return context
+
+def get_date(req_month):
+    if req_month:
+        year, month = (int(x) for x in req_month.split('-'))
+        return date(year, month, day=1)
+    return datetime.today()
+
+def prev_month(d):
+    first = d.replace(day=1)
+    prev_month = first - timedelta(days=1)
+    month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+    return month
+
+def next_month(d):
+    days_in_month = calendar.monthrange(d.year, d.month)[1]
+    last = d.replace(day=days_in_month)
+    next_month = last + timedelta(days=1)
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
+
+def event(request, event_id=None):
+    instance = Event()
+    if event_id:
+        instance = get_object_or_404(Event, pk=event_id)
+    else:
+        instance = Event()
+
+    form = EventForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('calendar'))
+    return render(request, 'dashboard/event.html', {'form': form})
 
 
 def get_weather_context():
@@ -16,7 +77,6 @@ def get_weather_context():
     city = 'Charlottesville'
 
     r = requests.get(url.format(city)).json()
-
     city_weather = {
         'city': city,
         'temperature': r['main']['temp'],
@@ -25,7 +85,6 @@ def get_weather_context():
     }
 
     context = {'city_weather': city_weather}
-
     return context
 
 
@@ -56,6 +115,36 @@ def Dashboard(request):
             messages.error(request, ('Please correct the error below.'))
     else:
         # we are getting this page as a GET request
+
+        # get calendar
+        # social = request.user.social_auth.get(provider='google-oauth2')
+        # local_time = datetime.datetime.now(datetime.timezone.utc).astimezone()
+        # print(local_time.isoformat())
+        # event = {
+        #     'summary': 'Google I/O 2015',
+        #     'location': '800 Howard St., San Francisco, CA 94103',
+        #     'description': 'A chance to hear more about Google\'s developer products.',
+        #     'start': {
+        #         'dateTime': '2020-04-15T00:00:00-04:00',
+        #         'timeZone': 'America/New_York',
+        #     },
+        #     'end': {
+        #         'dateTime': '2020-04-15T01:00:00-04:00',
+        #         'timeZone': 'America/New_York',
+        #     },
+        # }
+
+        # response = requests.post(
+        #     'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+        #     params={'access_token': social.extra_data['access_token']},
+        #     json=event,
+        #     ).json()
+        # response = requests.post(
+        #     'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+        #     params={'access_token': social.extra_data['access_token']},
+        #     json=event,
+        #     ).json()
+        # print(response)
 
         # create a blank form
         todo_form = TodoFormTextDate()

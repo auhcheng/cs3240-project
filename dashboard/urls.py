@@ -10,5 +10,8 @@ urlpatterns = [
     path('delcomp', views.delete_complete, name="delcomp"),
     path('delall', views.delete_all, name="delall"),
     path('del/<todo_id>', views.delete, name="del"),
-    path('task/<todo_id>', views.TaskPage, name="taskpage")
+    url(r'^calendar/$', views.CalendarView.as_view(), name='calendar'),
+    url(r'^event/new/$', views.event, name='event_new'),
+    url(r'^event/edit/(?P<event_id>\d+)/$', views.event, name='event_edit'),
+    path('task/<todo_id>', views.TaskPage, name="taskpage"),
 ]
