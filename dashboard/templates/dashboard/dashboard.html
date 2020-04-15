@@ -1,16 +1,9 @@
 {% extends 'dashboard/base.html' %}
-{% block content %}<div class='row'>
+{% block content %}
+<div class='row'>
  <div class='col s12 m6 offset-m3' style="text-align:center">
   <H3>Hi {{ user.first_name }}!</H3>
   <html lang="en">
-  
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>Document</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
-  </head>
   
   <body>
       <section class="section">
@@ -23,7 +16,21 @@
                             <div class="input-group">
                               Task: {{ todo_form.task }}
                                 <br>
-                              Due Date: {{ todo_form.due }}
+                              Due Date:
+                              <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                {{ todo_form.due }}
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                              </div>
+                              
+                              <script>
+                                $(function () {
+                                  $("#datetimepicker1").datetimepicker({
+                                    format: 'DD/MM/YYYY HH:mm',
+                                  });
+                                });
+                              </script>
                             </div>
                         </div>
                         <span class="input-group-btn">
