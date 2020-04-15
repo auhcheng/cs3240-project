@@ -36,6 +36,7 @@ def Dashboard(request):
 
         # read the form data from the POST request into a TodoFormText
         todo_form = TodoFormTextDate(request.POST)
+        
         if todo_form.is_valid():
 
             # get the Todo instance from the TodoFormText without saving
@@ -45,6 +46,11 @@ def Dashboard(request):
             todo.user = request.user
 
             todo.save()
+            return HttpResponseRedirect('/')
+        elif note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
             return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
@@ -58,6 +64,7 @@ def Dashboard(request):
         context = get_weather_context()
         context['todo_list'] = Todo.objects.order_by('id')
         context['todo_form'] = todo_form
+
         return render(request, 'dashboard/dashboard.html', context)
 
 

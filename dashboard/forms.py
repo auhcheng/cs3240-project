@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from dashboard.models import Profile, Todo
+from dashboard.models import Profile, Todo, Note
 from django import forms
 
 
@@ -43,3 +43,8 @@ class TodoFormTextDate(forms.ModelForm):
     class Meta:
         model = Todo
         fields = ('task', 'due',)
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ('title', 'body')

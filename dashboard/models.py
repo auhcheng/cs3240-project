@@ -33,3 +33,15 @@ class Todo(models.Model):
 
     def __str__(self):
         return self.task
+
+class Note(models.Model):
+    title = models.CharField(max_length=50, default="New note")
+    body = models.TextField(max_length=5000, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_archived = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+    
+    def archive(self):
+        is_archived = True
