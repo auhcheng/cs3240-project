@@ -125,9 +125,8 @@ def TodosPage(request):
 
         # read the form data from the POST request into a TodoFormText
         todo_form = TodoForm(request.POST)
-        print('we got a post')
+        
         if todo_form.is_valid():
-            print('and it was valid')
             # get the Todo instance from the TodoFormText without saving
             todo = todo_form.save(commit=False)
 

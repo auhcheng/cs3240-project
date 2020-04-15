@@ -20,12 +20,12 @@ class ProfileForm(forms.ModelForm):
 
 class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
-        input_formats=['%d/%m/%Y %H:%M'],
+        input_formats=['%d/%m/%Y %H:%M', '%m/%d/%Y %I:%M %p'],
         widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
     class Meta:
         model = Todo
-        fields = ('task', 'due', 'complete')
+        fields = ('task', 'due')
         widgets = {
             'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
         }
@@ -37,11 +37,11 @@ class NoteForm(forms.ModelForm):
 
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(
-        input_formats=['%d/%m/%Y %H:%M'],
+        input_formats=['%d/%m/%Y %H:%M', '%m/%d/%Y %I:%M %p'],
         widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
     end_time = forms.DateTimeField(
-        input_formats=['%d/%m/%Y %H:%M'],
+        input_formats=['%d/%m/%Y %H:%M', '%m/%d/%Y %I:%M %p'],
         widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
     )
 
