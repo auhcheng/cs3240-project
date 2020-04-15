@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.Dashboard, name="dashboard"),
+    url(r'^todos', views.TodoTab, name='todo'),
+    url(r'^notes', views.NotesTab, name='note'),
     url(r'^profile/$', views.update_profile, name="profile"),
     url(r'^account/logout/$', views.Logout, name="logout"),
     path('complete/<todo_id>', views.complete_todo, name="complete"),

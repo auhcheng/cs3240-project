@@ -29,43 +29,12 @@ def get_weather_context():
 
 @login_required
 def Dashboard(request):
-
     # if the form has been filled out and sent to us as a POST request
     if request.method == 'POST':
-
-        # read the form data from the POST request into a TodoForm
-        todo_form = TodoForm(request.POST)
-        note_form = NoteForm(request.POST)
-        if todo_form.is_valid():
-
-            # get the Todo instance from the TodoForm without saving
-            todo = todo_form.save(commit=False)
-
-            # set the user of this Todo to the current user
-            todo.user = request.user
-
-            todo.save()
-            return HttpResponseRedirect('/')
-        elif note_form.is_valid():
-            note = note_form.save(commit=False)
-            note.user = request.user
-            note.save()
-            return HttpResponseRedirect('/')
-        else:
-            messages.error(request, ('Please correct the error below.'))
+        return HttpResponseRedirect('/')
     else:
         # we are getting this page as a GET request
-
-        # create a blank form
-        todo_form = TodoForm()
-        note_form = NoteForm()
-        # render everything as normal
-        context = get_weather_context()
-        context['todo_list'] = Todo.objects.order_by('id')
-        context['todo_form'] = TodoForm()
-
-        context['note_list'] = Note.objects.order_by('id')
-        context['note_form'] = NoteForm()
+        context = get_weather_context()        
         return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -89,6 +58,62 @@ def update_profile(request):
     })
 
 @login_required
+def NotesTab(request):
+# if the form has been filled out and sent to us as a POST request
+    context = {}
+    if request.method == 'POST':        
+        # read the form data from the POST request into a TodoForm
+        note_form = NoteForm(request.POST)       
+        if note_form.is_valid():
+            # get the Todo instance from the TodoForm without saving
+            note = note_form.save(commit=False)
+            # set the user of this Todo to the current user
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('notes')        
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+        # create a blank form
+        note_form = NoteForm()        
+        # render everything as normal        
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()
+        return render(request, 'dashboard/note.html', context)
+
+@login_required
+def TodoTab(request):
+# if the form has been filled out and sent to us as a POST request
+    context = {}
+    if request.method == 'POST':        
+        # read the form data from the POST request into a TodoForm
+        todo_form = TodoForm(request.POST)        
+        if todo_form.is_valid():
+
+            # get the Todo instance from the TodoForm without saving
+            todo = todo_form.save(commit=False)
+
+            # set the user of this Todo to the current user
+            todo.user = request.user
+
+            todo.save()
+            return HttpResponseRedirect('todos')        
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # create a blank form
+        todo_form = TodoForm()        
+        # render everything as normal
+        
+        context['todo_list'] = Todo.objects.order_by('id')
+        context['todo_form'] = TodoForm()
+        return render(request, 'dashboard/todo.html', context)
+
+
+@login_required
 def add_todo(request):
     if request.method == 'POST':
         todo_form = TodoForm(request.POST)
@@ -97,7 +122,7 @@ def add_todo(request):
             temp_todo.user = request.user
             temp_todo.save()
             todo_form.save_m2m()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('todo')
         else:
             messages.error(request, ('Please correct the error.'))
     # else:
@@ -105,7 +130,7 @@ def add_todo(request):
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
     context['todo_form'] = TodoForm()
-    return render(request, 'dashboard/dashboard.html', context)
+    return render(request, 'dashboard/todos.html', context)
 
 
 @login_required
@@ -118,23 +143,23 @@ def complete_todo(request, todo_id):
     context = get_weather_context()
     context['todo_list'] = Todo.objects.order_by('id')
     context['todo_form'] = TodoForm()
-    return redirect("dashboard")
+    return redirect("todo")
 
 @login_required
 def delete(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
     todo.delete()
-    return redirect("dashboard")
+    return redirect("todo")
 
 @login_required
 def delete_complete(request):
     Todo.objects.filter(complete__exact=True, user__exact=request.user).delete()
-    return redirect("dashboard")
+    return redirect("todo")
 
 @login_required
 def delete_all(request):
     Todo.objects.filter(user__exact=request.user).delete()
-    return redirect("dashboard")
+    return redirect("todo")
 
 
 def Logout(request):
