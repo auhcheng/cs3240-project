@@ -27,6 +27,8 @@ from .forms import EventForm
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'dashboard/calendar.html'
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,7 +70,9 @@ def event(request, event_id=None):
     form = EventForm(request.POST or None, instance=instance)
 
     if request.POST and form.is_valid():
-        form.save()
+        event = form.save(commit=False)
+        event.user = request.user
+        event.save()
         return HttpResponseRedirect(reverse('calendar'))
     return render(request, 'dashboard/event.html', {'form': form})
 

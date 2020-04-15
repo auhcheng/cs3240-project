@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
-
+from django.utils.timezone import utc
 import datetime
 from django.utils import timezone
 
@@ -30,7 +30,7 @@ class Todo(models.Model):
     task = models.CharField(max_length=50, default="")
     complete = models.BooleanField(default=False)
     user = models.CharField(max_length=6, default="")
-    due = models.DateTimeField(default=timezone.now() + datetime.timedelta(days=7))  # a week from now
+    due = models.DateTimeField(default=datetime.datetime(2020, 4, 22, 17, 46, 37, 900802, tzinfo=utc))
 
     def __str__(self):
         return self.task
@@ -52,6 +52,7 @@ class Event(models.Model):
     description = models.TextField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     @property
     def get_html_url(self):

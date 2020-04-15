@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 from . import views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     url(r'^$', views.Dashboard, name="dashboard"),
@@ -10,7 +11,7 @@ urlpatterns = [
     path('delcomp', views.delete_complete, name="delcomp"),
     path('delall', views.delete_all, name="delall"),
     path('del/<todo_id>', views.delete, name="del"),
-    url(r'^calendar/$', views.CalendarView.as_view(), name='calendar'),
+    url(r'^calendar/$', login_required(views.CalendarView.as_view()), name='calendar'),
     url(r'^event/new/$', views.event, name='event_new'),
     url(r'^event/edit/(?P<event_id>\d+)/$', views.event, name='event_edit'),
     path('task/<todo_id>', views.edit_todo, name="taskpage"),
