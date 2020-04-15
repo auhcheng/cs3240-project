@@ -32,7 +32,7 @@ class TodoFormDate(forms.ModelForm):
 class TodoFormTextDate(forms.ModelForm):
     class Meta:
         model = Todo
-        fields = ('task',)
+        fields = ('task', 'due')
 
 class NoteForm(forms.ModelForm):
     class Meta:

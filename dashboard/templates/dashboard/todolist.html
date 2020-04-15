@@ -152,7 +152,11 @@
                           {% csrf_token %}
                           <div class="form-group">
                               <div class="input-group">
-                                {{ todo_form.task }}
+                                Task: {{ todo_form.task }}
+                            </div>
+                            <br>
+                              <div class="input-group">
+                                Due Date: {{ todo_form.due }}
                             </div>
                         </div>
                         <span class="input-group-btn">
@@ -168,12 +172,12 @@
                         {% for todo in todo_list %}
                           {% if user.username == todo.user %}
                               {% if todo.complete %}
-                                  <div style="float:left"><a href = "{% url 'complete' todo.id %}" ><li><del>{{ todo.task }}</del></li></a></div>
+                                  <div style="float:left"><a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a></div>
                                   <div style="float:right"><a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete</button></a></div>
                                   <div style="clear:both"/>
                                   
                               {% else %}
-                                  <div style="float:left"><a href = "{% url 'complete' todo.id %}"><li>{{ todo.task }}</li></a></div>
+                                  <div style="float:left"><a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a></div>
                                   <div style="float:right"><a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete</button></a></div>
                                   <div style="clear:both"/>
                                   

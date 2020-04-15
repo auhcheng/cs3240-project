@@ -160,7 +160,7 @@ def NotesPage(request):
 
 @login_required
 def add_todo(request):
-    context={}
+    context = {}
     if request.method == 'POST':
         todo_form = TodoFormText(request.POST)
         if todo_form.is_valid():
@@ -188,8 +188,11 @@ def complete_todo(request, todo_id):
     todo.save()
 
     todo_form_text = TodoFormText()
-    context = {'todo_form_text': todo_form_text, 'todo': Todo.objects.get(pk=todo_id), 'update': update}
-    return render(request, 'dashboard/todo.html', context)
+    todo_form_date = TodoFormDate()
+    context = {'todo_form_text': todo_form_text, 'todo_form_date': todo_form_date, 'todo': Todo.objects.get(pk=todo_id), 'update': update}
+    # return render(request, 'dashboard/todo.html', context)
+    redirectStr = "/task/"+todo_id
+    return redirect(redirectStr)
 
 
 @login_required
