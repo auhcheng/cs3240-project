@@ -147,29 +147,72 @@
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <div class="container-fluid">
-          <div class="card">
-            <article class="media">                             
-                <div class="media-left">                                  
-                    <figure class="figure">
-                        <img class="img-fluid" src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" alt="Image">
-                    </figure>
+        <section class="section">
+            <div class="container">
+                <div class="columns">
+                  <div class="box">
+                      <form action="#" method="POST" role="form">
+                          {% csrf_token %}
+                          <div class="form-group">
+                              <div class="input-group">
+                                Task: {{ todo_form.task }}
+                                  <br>
+                                Due Date: {{ todo_form.due }}
+                              </div>
+                          </div>
+                          <span class="input-group-btn">
+                              <button type="submit" class="btn btn-default" id="add-btn">Add task</button>
+                          </span>
+                      </form>
+                      <br>
+                      <div class="btn-group">
+                          <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-default" >Delete complete tasks</button></a>
+                          <a href="{% url 'delall' %}"><button type="button" class="btn btn-default" >Delete all tasks</button></a>
+                      </div>
+                      <br>
+                      <div class="column">
+                          <ul>
+                              {% for todo in todo_list %}
+                                  {% if user.username == todo.user %}
+                                      {% if todo.complete %}
+                                          {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}" ><li><del>{{ todo.task }}</del></li></a><br>
+                                      {% else %}
+                                          {{ todo.due }} <a href = "{% url 'taskpage' todo.id %}"><li>{{ todo.task }}</li></a><br>
+                                      {% endif %}
+  <!--                              <div class="btn-group">-->
+  <!--                                  <a href="{% url 'del' todo.id %}"><button type="button" class="btn btn-default" >Delete above task</button></a>-->
+  <!--                              </div>-->
+                                  {% endif %}
+                              {% endfor %}
+                          </ul>
+                      </div>
+                  </div>
+                    <div class="column is-offset-1 is-4">
+                        <div class="box">
+                            <article class="media">                             
+                                <div class="media-left">                                  
+                                    <figure class="image is-50x50">
+                                        <img src="http://openweathermap.org/img/w/{{ city_weather.icon }}.png" alt="Image">
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <span class="title">{{ city_weather.city }}</span>
+                                            <br>
+                                            <span class="subtitle">{{ city_weather.temperature }}° F</span>
+                                            <br> {{ city_weather.description }}
+                                        </p>
+                                    </div>                                  
+                                </div>                              
+                            </article>
+                        </div>
+                        <!-- Embeds Calendar -->
+                        <iframe id="displayCalendar" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+                    </div>
                 </div>
-                <div class="media-content">
-                    <div class="content">
-                        <p>
-                            <span class="title">{{ city_weather.city }}</span>
-                            <br>
-                            <span class="subtitle">{{ city_weather.temperature }}° F</span>
-                            <br> {{ city_weather.description }}
-                        </p>
-                    </div>                                  
-                </div>                              
-            </article>            
-        </div>          
-          <br>
-          <iframe id="displayCalendar" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-        </div>
+            </div>
+        </section>
         <!-- /.container-fluid -->
 
       </div>
