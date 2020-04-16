@@ -26,6 +26,7 @@ urlpatterns = [
     path('delcomp', views.delete_complete, name="delcomp"),
     path('delall', views.delete_all, name="delall"),
     path('del/<todo_id>', views.delete, name="del"),
+    path('delnote/<note_id>', views.deleteNote, name='delnote'),
     url(r'^calendar/$', login_required(views.CalendarView.as_view()), name='calendar'),
     url(r'^event/new/$', views.event, name='event_new'),
     url(r'^event/edit/(?P<event_id>\d+)/$', views.event, name='event_edit'),

@@ -246,6 +246,12 @@ def delete_all(request):
     Todo.objects.filter(user__exact=request.user).delete()
     return redirect("/todos")
 
+@login_required
+def deleteNote(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.delete()
+    return redirect("/notes")
+
 
 def Logout(request):
     logout(request)

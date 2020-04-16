@@ -27,6 +27,8 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ note.title }}</h5>
                   <p class="card-text">{{ note.body }}</p>
+                  <button href="{% url 'note' %}" type="button" class="btn btn-default" >Archive</button>
+                  <button href="{% url 'delnote' note.id %}" type="button" class="btn btn-default" >Delete</button>
                 </div>
               </div>
             {% endif %}
