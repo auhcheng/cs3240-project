@@ -34,6 +34,11 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ('title', 'body')
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'New note'}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body',
+                                        'style': 'height: 10rem'}),
+        }
 
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(
