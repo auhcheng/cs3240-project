@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
-from .models import Profile, Todo
-from .forms import UserForm, ProfileForm, TodoForm
+from .models import Profile, Todo, Note
+from .forms import ProfileForm, TodoForm, NoteForm
 from django.contrib import messages
 import requests
 from django.utils import timezone
@@ -27,9 +27,10 @@ from .forms import EventForm
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'dashboard/calendar.html'
+
     def get_queryset(self):
         return self.model.objects.filter(user=self.request.user)
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         d = get_date(self.request.GET.get('month', None))
@@ -84,21 +85,31 @@ def edit_todo(request, todo_id=None):
 
     if request.POST and form.is_valid():
         form.save()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('todolist'))
     
     return render(request, 'dashboard/todo.html', {'form': form})
 
-def get_weather_context():
+def get_weather_context(city):
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
-    city = 'Charlottesville'
-
-    r = requests.get(url.format(city)).json()
-    city_weather = {
-        'city': city,
-        'temperature': r['main']['temp'],
-        'description': r['weather'][0]['description'],
-        'icon': r['weather'][0]['icon'],
-    }
+    
+    try:
+        r = requests.get(url.format(city)).json()
+        city_weather = {
+            'city': city,
+            'temperature': r['main']['temp'],
+            'description': r['weather'][0]['description'],
+            'icon': r['weather'][0]['icon'],
+        }
+    except KeyError:
+        city = "Charlottesville"
+        r = requests.get(url.format(city)).json()
+        city_weather = {
+            'city': city,
+            'temperature': r['main']['temp'],
+            'description': r['weather'][0]['description'],
+            'icon': r['weather'][0]['icon'],
+        }
+    
 
     context = {'city_weather': city_weather}
     return context
@@ -108,12 +119,25 @@ def get_weather_context():
 def Dashboard(request):
     # if the form has been filled out and sent to us as a POST request
     if request.method == 'POST':
+        return HttpResponseRedirect("/")
+    else:
+        # we are getting this page as a GET request        
+        # render everything as normal
+        city = request.user.profile.city_location
+        context = get_weather_context(city)
+        return render(request, 'dashboard/dashboard.html', context)
+
+
+@login_required
+def TodosPage(request):
+    context=dict()
+    # if the form has been filled out and sent to us as a POST request
+    if request.method == 'POST':
 
         # read the form data from the POST request into a TodoFormText
         todo_form = TodoForm(request.POST)
-        
-        if todo_form.is_valid():
 
+        if todo_form.is_valid():
             # get the Todo instance from the TodoFormText without saving
             todo = todo_form.save(commit=False)
 
@@ -121,76 +145,64 @@ def Dashboard(request):
             todo.user = request.user
 
             todo.save()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/todos')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
         # we are getting this page as a GET request
 
-        # get calendar
-        # social = request.user.social_auth.get(provider='google-oauth2')
-        # local_time = datetime.datetime.now(datetime.timezone.utc).astimezone()
-        # print(local_time.isoformat())
-        # event = {
-        #     'summary': 'Google I/O 2015',
-        #     'location': '800 Howard St., San Francisco, CA 94103',
-        #     'description': 'A chance to hear more about Google\'s developer products.',
-        #     'start': {
-        #         'dateTime': '2020-04-15T00:00:00-04:00',
-        #         'timeZone': 'America/New_York',
-        #     },
-        #     'end': {
-        #         'dateTime': '2020-04-15T01:00:00-04:00',
-        #         'timeZone': 'America/New_York',
-        #     },
-        # }
-
-        # response = requests.post(
-        #     'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-        #     params={'access_token': social.extra_data['access_token']},
-        #     json=event,
-        #     ).json()
-        # response = requests.post(
-        #     'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-        #     params={'access_token': social.extra_data['access_token']},
-        #     json=event,
-        #     ).json()
-        # print(response)
-
         # create a blank form
-        todo_form = TodoForm()
-
+        todo_form = TodoForm()      
         # render everything as normal
-        context = get_weather_context()
         context['todo_list'] = Todo.objects.order_by('id')
-        context['todo_form'] = todo_form
-
-        return render(request, 'dashboard/dashboard.html', context)
-
+        context['todo_form'] = todo_form          
+        return render(request, 'dashboard/todolist.html', context)
 
 @login_required
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if profile_form.is_valid():
             profile_form.save()
             return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
-        user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'dashboard/profile.html', {
-        'user_form': user_form,
         'profile_form': profile_form
     })
 
 
 @login_required
+def NotesPage(request):
+# if the form has been filled out and sent to us as a POST request
+    context = {}
+    if request.method == 'POST':
+        # read the form data from the POST request into a TodoFormText        
+        note_form = NoteForm(request.POST)        
+        if note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('/notes')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # create a blank form        
+        note_form = NoteForm()
+        # render everything as normal                
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()   
+        return render(request, 'dashboard/note.html', context)
+
+
+@login_required
 def add_todo(request):
+    context = {}
     if request.method == 'POST':
         todo_form = TodoForm(request.POST)
         if todo_form.is_valid():
@@ -198,49 +210,46 @@ def add_todo(request):
             temp_todo.user = request.user
             temp_todo.save()
             todo_form.save_m2m()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/todos')
         else:
-            messages.error(request, ('Please correct the error.'))
-    # else:
-    #     todo_form = TodoFormText(instance=request.user.todo)
-    context = get_weather_context()
-    context['todo_list'] = Todo.objects.order_by('id')
-    context['todo_form'] = TodoForm()
-    return render(request, 'dashboard/dashboard.html', context)
+            messages.error(request, ('Please correct the error.'))    
+    else:
+        context['todo_list'] = Todo.objects.order_by('id')
+        context['todo_form'] = TodoForm()
+        return render(request, 'dashboard/todolist.html', context)
 
 @login_required
 def complete_todo(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
-    if todo.complete:
-        todo.complete = False
-        update = "Now incomplete!"
-    else:
-        todo.complete = True
-        update = "Now complete!"
+    todo.complete = not todo.complete
     todo.save()
 
-    todo_form = TodoForm()
-    context = {'form': todo_form, 'update': update}
-    return render(request, 'dashboard/todo.html', context)
+    return redirect("/todos")
 
 
 @login_required
 def delete(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
     todo.delete()
-    return redirect("dashboard")
+    return redirect("/todos")
 
 
 @login_required
 def delete_complete(request):
     Todo.objects.filter(complete__exact=True, user__exact=request.user).delete()
-    return redirect("dashboard")
+    return redirect("/todos")
 
 
 @login_required
 def delete_all(request):
     Todo.objects.filter(user__exact=request.user).delete()
-    return redirect("dashboard")
+    return redirect("/todos")
+
+@login_required
+def deleteNote(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.delete()
+    return redirect("/notes")
 
 
 def Logout(request):
