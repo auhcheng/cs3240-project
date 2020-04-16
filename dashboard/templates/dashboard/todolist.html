@@ -4,18 +4,19 @@
 
 <div class="container">
   <!-- Input Form -->
+  <div class="d-flex justify-content-center">
+
+  
 <form action="#" method="POST" role="form">
   {% csrf_token %}
   <div class="form-group"><div class="input-group">{{ todo_form.task }}</div></div>
   <div class="form-group">{{ todo_form.due }}</div>
-  <div class="btn-group">
-      <button type="submit" class="btn btn-primary mb-2" id="add-btn">Add task</button>
+  <div class="btn-group mb-3">
+      <button type="submit" class="btn btn-primary" id="add-btn">Add task</button>
+      <a href="{% url 'delcomp' %}" type="button" class="btn btn-secondary">Delete complete tasks</a>
+      <a href="{% url 'delall' %}" type="button" class="btn btn-danger">Delete all tasks</a>
   </div>
 </form>
-
-<div class="btn-group" role="group" aria-label="Basic example">
-  <a href="{% url 'delcomp' %}"><button type="button" class="btn btn-secondary">Delete complete tasks</button></a>
-  <a href="{% url 'delall' %}"><button type="button" class="btn btn-secondary">Delete all tasks</button></a>
 </div>
 
 <!-- Todo List -->

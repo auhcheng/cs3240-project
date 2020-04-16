@@ -21,7 +21,7 @@ class ProfileForm(forms.ModelForm):
 class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M', '%m/%d/%Y %I:%M %p'],
-        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M')
+        widget=BootstrapDateTimePickerInput(format='%d/%m/%Y %H:%M', attrs={'placeholder': 'Deadline'})
     )
     class Meta:
         model = Todo
