@@ -38,7 +38,6 @@
 </head>
 
 {% if user.is_authenticated %}
-{% load static %}
 <div>
 <body id="page-top">
 
@@ -184,16 +183,21 @@
           </ul>
 
         </nav>
+        {% endif %}
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
+        
         {% block content %}
+        
+
         {% endblock %}
+        
         <!-- /.container-fluid -->
 
       </div>
       <!-- End of Main Content -->
-
+      {% if user.is_authenticated %}
       <!-- Footer -->
       <!-- <footer class="sticky-footer bg-white">
         <div class="container my-auto">
@@ -233,6 +237,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   <!-- Bootstrap core JavaScript-->
   <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
@@ -253,6 +258,6 @@
 
 </body>
 </div>
-{% endif %}
+
 
 </html>
