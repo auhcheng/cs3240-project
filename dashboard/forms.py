@@ -6,17 +6,14 @@ from django import forms
 from .widgets import BootstrapDateTimePickerInput
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
-
-
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('bio', 'location', 'birth_date')
-
+        fields = ('preferred_name', 'city_location')
+        widgets = {
+            'preferred_name': forms.TextInput(attrs={'placeholder': 'Preferred name', 'class': 'form-control'}),
+            'city_location': forms.TextInput(attrs={'placeholder': 'City', 'class': 'form-control'}),
+        }
 
 class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
