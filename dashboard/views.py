@@ -185,7 +185,7 @@ def NotesPage(request):
     else:
         # we are getting this page as a GET request
 
-        # create a blank form        
+        # create a blank form
         note_form = NoteForm()
         # render everything as normal                
         context['note_list'] = Note.objects.order_by('id')
