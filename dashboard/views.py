@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo, Note
-from .forms import UserForm, ProfileForm, TodoForm, NoteForm
+from .forms import ProfileForm, TodoForm, NoteForm
 from django.contrib import messages
 import requests
 from django.utils import timezone
@@ -89,17 +89,27 @@ def edit_todo(request, todo_id=None):
     
     return render(request, 'dashboard/todo.html', {'form': form})
 
-def get_weather_context():
+def get_weather_context(city):
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
-    city = 'Charlottesville'
-
-    r = requests.get(url.format(city)).json()
-    city_weather = {
-        'city': city,
-        'temperature': r['main']['temp'],
-        'description': r['weather'][0]['description'],
-        'icon': r['weather'][0]['icon'],
-    }
+    
+    try:
+        r = requests.get(url.format(city)).json()
+        city_weather = {
+            'city': city,
+            'temperature': r['main']['temp'],
+            'description': r['weather'][0]['description'],
+            'icon': r['weather'][0]['icon'],
+        }
+    except KeyError:
+        city = "Charlottesville"
+        r = requests.get(url.format(city)).json()
+        city_weather = {
+            'city': city,
+            'temperature': r['main']['temp'],
+            'description': r['weather'][0]['description'],
+            'icon': r['weather'][0]['icon'],
+        }
+    
 
     context = {'city_weather': city_weather}
     return context
@@ -113,7 +123,8 @@ def Dashboard(request):
     else:
         # we are getting this page as a GET request        
         # render everything as normal
-        context = get_weather_context()        
+        city = request.user.profile.city_location
+        context = get_weather_context(city)
         return render(request, 'dashboard/dashboard.html', context)
 
 
@@ -151,19 +162,15 @@ def TodosPage(request):
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if profile_form.is_valid():
             profile_form.save()
             return HttpResponseRedirect('/')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
-        user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'dashboard/profile.html', {
-        'user_form': user_form,
         'profile_form': profile_form
     })
 
@@ -217,18 +224,10 @@ def add_todo(request):
 @login_required
 def complete_todo(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
-    if todo.complete:
-        todo.complete = False
-        update = "Now incomplete!"
-    else:
-        todo.complete = True
-        update = "Now complete!"
+    todo.complete = not todo.complete
     todo.save()
 
-    todo_form = TodoForm()
-    context = {'form': todo_form, 'update': update}
-    redirectStr = "/task/"+todo_id
-    return redirect(redirectStr)
+    return redirect("/todos")
 
 
 @login_required

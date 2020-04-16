@@ -31,7 +31,7 @@
     <div class="btn-group">
         <button type="submit" class="btn btn-primary mb-2" id="add-btn">Submit</button>
         <a class="btn btn-danger mb-2" href="{% url 'del' form.instance.id %}">Delete task</a>
-        <a class="btn btn-success mb-2" href="{% url 'complete' form.instance.id %}">Mark as {{ form.instance.complete|yesno:"incomplete,complete" }}</a>
+        <a class='btn btn-{{ form.instance.complete|yesno:"warning,success" }} mb-2' href="{% url 'complete' form.instance.id %}">Mark as {{ form.instance.complete|yesno:"incomplete,complete" }}</a>
     </div>
   </form>
 </div>
