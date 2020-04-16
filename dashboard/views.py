@@ -192,12 +192,15 @@ def NotesPage(request):
     else:
         # we are getting this page as a GET request
 
-        # create a blank form        
-        note_form = NoteForm()
         # render everything as normal                
         context['note_list'] = Note.objects.order_by('id')
         context['note_form'] = NoteForm()   
         return render(request, 'dashboard/note.html', context)
+
+
+def ArchivePage(request):
+    context = {'note_list': Note.objects.order_by('id')}
+    return render(request, 'dashboard/notearchive.html', context)
 
 
 @login_required
@@ -245,11 +248,47 @@ def delete_all(request):
     Todo.objects.filter(user__exact=request.user).delete()
     return redirect("/todos")
 
+
 @login_required
-def deleteNote(request, note_id):
+def delete_note(request, note_id):
     note = Note.objects.get(pk=note_id)
     note.delete()
     return redirect("/notes")
+
+
+@login_required
+def delete_note_archive(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.delete()
+    return redirect("/archive")
+
+
+@login_required
+def delete_note_all(request):
+    Note.objects.filter(user__exact=request.user, is_archived=False).delete()
+    return redirect("/notes")
+
+
+@login_required
+def delete_note_archive_all(request):
+    Note.objects.filter(user__exact=request.user, is_archived=True).delete()
+    return redirect("/archive")
+
+
+@login_required
+def archive_note(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.is_archived = True
+    note.save()
+    return redirect("/notes")
+
+
+@login_required
+def unarchive_note(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.is_archived = False
+    note.save()
+    return redirect("/archive")
 
 
 def Logout(request):
