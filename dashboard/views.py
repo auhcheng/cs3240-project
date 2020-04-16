@@ -221,18 +221,10 @@ def add_todo(request):
 @login_required
 def complete_todo(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
-    if todo.complete:
-        todo.complete = False
-        update = "Now incomplete!"
-    else:
-        todo.complete = True
-        update = "Now complete!"
+    todo.complete = not todo.complete
     todo.save()
 
-    todo_form = TodoForm()
-    context = {'form': todo_form, 'update': update}
-    redirectStr = "/task/"+todo_id
-    return redirect(redirectStr)
+    return redirect("/todos")
 
 
 @login_required
