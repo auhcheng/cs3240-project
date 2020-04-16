@@ -2,6 +2,13 @@
 {% block content %}
 
 <div class="container">
+
+  <!-- Go to archive -->
+  <a href="{% url 'archive' %}" type="button" class="btn btn-default" >Go to note archive</a>
+
+  <!-- Delete all unarchived notes -->
+  <a href="{% url 'delnoteall' %}" type="button" class="btn btn-default" >Delete all unarchived notes</a>
+
   <!-- Note Form -->
   <div class="d-flex justify-content-center">
   <form action="#" method="POST" role="form">
@@ -27,8 +34,8 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ note.title }}</h5>
                   <p class="card-text">{{ note.body }}</p>
-                  <button href="{% url 'note' %}" type="button" class="btn btn-default" >Archive</button>
-                  <button href="{% url 'delnote' note.id %}" type="button" class="btn btn-default" >Delete</button>
+                  <a href="{% url 'archivenote' note.id %}" type="button" class="btn btn-default" >Archive</a>
+                  <a href="{% url 'delnote' note.id %}" type="button" class="btn btn-default" >Delete</a>
                 </div>
               </div>
             {% endif %}

@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container">
+  <!-- Go back to regular note list-->
+  <a href="{% url 'note' %}" type="button" class="btn btn-default" >Back to unarchived notes</a>
+
+  <!-- Delete all archived notes -->
+  <a href="{% url 'delnoteallarchive' %}" type="button" class="btn btn-default" >Delete all archived notes</a>
+
+  <!-- Display Notes -->
+  <div class="row">
+      {% for note in note_list %}
+        {% if user == note.user %}
+            {% if note.is_archived %}
+              <div class="card bg-light m-3" style="max-width: 18rem;">
+                <div class="card-body">
+                  <h5 class="card-title">{{ note.title }}</h5>
+                  <p class="card-text">{{ note.body }}</p>
+                  <a href="{% url 'unarchivenote' note.id%}" type="button" class="btn btn-default" >Remove from archive</a>
+                  <a href="{% url 'delnotearchive' note.id %}" type="button" class="btn btn-default" >Delete</a>
+                </div>
+              </div>
+            {% endif %}
+        {% endif %}
+      {% endfor %}
+  </div>
+</div>
+{% endblock %}
