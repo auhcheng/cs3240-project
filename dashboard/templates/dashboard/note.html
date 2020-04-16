@@ -3,12 +3,6 @@
 
 <div class="container">
 
-  <!-- Go to archive -->
-  <a href="{% url 'archive' %}" type="button" class="btn btn-default" >Go to note archive</a>
-
-  <!-- Delete all unarchived notes -->
-  <a href="{% url 'delnoteall' %}" type="button" class="btn btn-default" >Delete all unarchived notes</a>
-
   <!-- Note Form -->
   <div class="d-flex justify-content-center">
   <form action="#" method="POST" role="form">
@@ -21,6 +15,12 @@
   </div>
     <div class="btn-group">
         <button type="submit" class="btn btn-primary mb-2" id="add-btn">Write note</button>
+
+        <!-- Go to archive -->
+        <a href="{% url 'archive' %}" type="button" class="btn btn-secondary mb-2" >Go to archive</a>
+        
+        <!-- Delete all unarchived notes -->
+        <a href="{% url 'delnoteall' %}" type="button" class="btn btn-danger mb-2" >Delete all unarchived notes</a>
     </div>
   </form>
 </div>
@@ -34,8 +34,10 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ note.title }}</h5>
                   <p class="card-text">{{ note.body }}</p>
-                  <a href="{% url 'archivenote' note.id %}" type="button" class="btn btn-default" >Archive</a>
-                  <a href="{% url 'delnote' note.id %}" type="button" class="btn btn-default" >Delete</a>
+                  <div class="d-flex align-items-end">
+                    <a href="{% url 'archivenote' note.id %}" type="button" class="btn" >Archive</a>
+                    <a href="{% url 'delnote' note.id %}" type="button" class="btn" >Delete</a>
+                  </div>
                 </div>
               </div>
             {% endif %}
