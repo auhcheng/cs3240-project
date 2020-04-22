@@ -134,3 +134,17 @@ class DashboardTests(TestCase):
         task_count = Todo.objects.count()
         Todo.objects.filter(user__exact='te1st').delete()
         self.assertEqual(Todo.objects.count(), task_count - 1)
+
+    def test_login(self):
+        c = Client()
+        user = User(username='testuser')
+        user.save()
+        not_logged_in = c.get('/')
+
+        # we should be redirected
+        self.assertEqual(not_logged_in.status_code, 302) # 302 means redirect
+        self.assertEqual(not_logged_in.url, '/account/login/?next=/')
+        
+        c.force_login(user)
+        logged_in = c.get('/dashboard/')
+        self.assertEqual(logged_in.status_code, 200) # 200 means success
