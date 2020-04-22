@@ -9,10 +9,9 @@ from .widgets import BootstrapDateTimePickerInput
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('preferred_name', 'city_location')
+        fields = ('preferred_name',)
         widgets = {
             'preferred_name': forms.TextInput(attrs={'placeholder': 'Preferred name', 'class': 'form-control'}),
-            'city_location': forms.TextInput(attrs={'placeholder': 'City', 'class': 'form-control'}),
         }
 
 class TodoForm(forms.ModelForm):

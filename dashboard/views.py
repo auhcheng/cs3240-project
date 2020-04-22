@@ -23,6 +23,7 @@ import calendar
 from .models import *
 from .utils import Calendar
 from .forms import EventForm
+import geocoder
 
 class CalendarView(generic.ListView):
     model = Event
@@ -89,30 +90,35 @@ def edit_todo(request, todo_id=None):
     
     return render(request, 'dashboard/todo.html', {'form': form})
 
-def get_weather_context(city):
-    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
-    
-    try:
-        r = requests.get(url.format(city)).json()
-        city_weather = {
-            'city': city,
-            'temperature': r['main']['temp'],
-            'description': r['weather'][0]['description'],
-            'icon': r['weather'][0]['icon'],
-        }
-    except KeyError:
-        city = "Charlottesville"
-        r = requests.get(url.format(city)).json()
-        city_weather = {
-            'city': city,
-            'temperature': r['main']['temp'],
-            'description': r['weather'][0]['description'],
-            'icon': r['weather'][0]['icon'],
-        }
-    
-
-    context = {'city_weather': city_weather}
+def get_charlottesville_weather_context():
+    url = 'http://api.openweathermap.org/data/2.5/weather?q={},{}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+    r = requests.get(url.format('Charlottesville', 'Virginia')).json()
+    city_weather = {
+                'city': 'Charlottesville',
+                'temperature': r['main']['temp'],
+                'description': r['weather'][0]['description'],
+                'icon': r['weather'][0]['icon'],
+            }
+    context = {'city_weather': city_weather, 'city_found': False}
     return context
+
+def get_weather_context():
+    try:
+        g = geocoder.ip('me')
+        lat, lng = g.latlng
+        url = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+        r = requests.get(url.format(lat, lng)).json()
+        city_weather = {
+                    'city': r['name'],
+                    'temperature': r['main']['temp'],
+                    'description': r['weather'][0]['description'],
+                    'icon': r['weather'][0]['icon'],
+                }
+        
+        context = {'city_weather': city_weather, 'city_found': True}
+        return context
+    except:
+        return get_charlottesville_weather_context()
 
 
 @login_required
@@ -123,8 +129,7 @@ def Dashboard(request):
     else:
         # we are getting this page as a GET request        
         # render everything as normal
-        city = request.user.profile.city_location
-        context = get_weather_context(city)
+        context = get_weather_context()
         return render(request, 'dashboard/dashboard.html', context)
 
 
