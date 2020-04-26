@@ -3,6 +3,18 @@
 
 <div class="container">
 
+
+  <div class="d-flex justify-content-center">
+    <form action="/notes" method="POST" role="form">
+      {% csrf_token %}
+        <div class="form-group">
+          {{ search_form }}
+          <input type="submit" class="btn btn-primary-m1" value="Submit">
+<!--          <a href="{% url 'notes' %}" type="button" class="btn btn-secondary m-1"> Submit </a>-->
+        </div>
+    </form>
+  </div>
+
   <!-- Note Form -->
   <div class="d-flex justify-content-center">
   <form action="#" method="POST" role="form">
@@ -30,16 +42,18 @@
       {% for note in note_list %}
         {% if user == note.user %}
             {% if not note.is_archived %}
-              <div class="card bg-light m-2" style="max-width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">{{ note.title }}</h5>
-                  <p class="card-text">{{ note.body }}</p>
-                  <div class="d-flex">
-                    <a href="{% url 'archivenote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Archive</a>
-                    <a href="{% url 'delnote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Delete</a>
+              {% if search_term in note.title %}
+                <div class="card bg-light m-2" style="max-width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ note.title }}</h5>
+                    <p class="card-text">{{ note.body }}</p>
+                    <div class="d-flex">
+                      <a href="{% url 'archivenote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Archive</a>
+                      <a href="{% url 'delnote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Delete</a>
+                    </div>
                   </div>
                 </div>
-              </div>
+              {% endif %}
             {% endif %}
         {% endif %}
       {% endfor %}

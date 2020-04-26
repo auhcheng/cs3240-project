@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from .models import Profile, Todo, Note
-from .forms import ProfileForm, TodoForm, NoteForm
+from .forms import ProfileForm, TodoForm, NoteForm, SearchForm
 from django.contrib import messages
 import requests
 from django.utils import timezone
@@ -168,20 +168,34 @@ def NotesPage(request):
     context = {}
     if request.method == 'POST':
         # read the form data from the POST request into a TodoFormText        
-        note_form = NoteForm(request.POST)        
+        note_form = NoteForm(request.POST)
+        search_form = SearchForm(request.POST)
+
+        if search_form.is_valid():
+            context['search_term'] = search_form.cleaned_data['search']
+
         if note_form.is_valid():
             note = note_form.save(commit=False)
             note.user = request.user
             note.save()
-            return HttpResponseRedirect('/notes')
+
         else:
-            messages.error(request, ('Please correct the error below.'))
+            messages.error(request, 'Please correct the error below.')
+
+        # render everything as normal
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()
+        context['search_form'] = SearchForm(request.POST)
+        return render(request, 'dashboard/note.html', context)
+
     else:
         # we are getting this page as a GET request
 
         # render everything as normal                
         context['note_list'] = Note.objects.order_by('id')
-        context['note_form'] = NoteForm()   
+        context['note_form'] = NoteForm()
+        context['search_form'] = SearchForm()
+        context['search_term'] = ''
         return render(request, 'dashboard/note.html', context)
 
 @login_required

@@ -14,6 +14,7 @@ class ProfileForm(forms.ModelForm):
             'preferred_name': forms.TextInput(attrs={'placeholder': 'Preferred name', 'class': 'form-control'}),
         }
 
+
 class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
         input_formats=['%d/%m/%Y %H:%M', '%m/%d/%Y %I:%M %p'],
@@ -26,6 +27,7 @@ class TodoForm(forms.ModelForm):
             'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
         }
 
+
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
@@ -35,6 +37,7 @@ class NoteForm(forms.ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body',
                                         'style': 'height: 6rem'}),
         }
+
 
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(
@@ -53,3 +56,7 @@ class EventForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(required=False)
