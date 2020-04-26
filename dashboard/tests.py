@@ -2,7 +2,7 @@ from django.test import TestCase
 from .views import get_weather_context, add_todo, complete_todo, delete_complete, delete_all, Dashboard
 
 from .forms import TodoForm
-from .models import Todo
+from .models import Todo, Event
 import datetime, pytz
 from django.utils import timezone
 
@@ -143,3 +143,23 @@ class DashboardTests(TestCase):
         c.force_login(user)
         logged_in = c.get('/dashboard/')
         self.assertEqual(logged_in.status_code, 200) # 200 means success
+    
+    def test_events_are_private(self):
+        user1 = User(username='testuser1'); user1.save()
+        user2 = User(username='testuser2'); user2.save()
+        e = Event.objects.create(title='', description='', start_time=datetime.datetime.now(), end_time=datetime.datetime.now(), user=user1)
+        event_id = e.pk
+        e.save()
+
+        c1 = Client()
+        c1.force_login(user1)
+        try_to_edit = c1.get(reverse('event_edit', args=(event_id,)))
+        self.assertEqual(try_to_edit.status_code, 200)
+
+        c2 = Client()
+        c2.force_login(user2)
+        try_to_edit = c2.get(reverse('event_edit', args=(event_id,)))
+        self.assertEqual(try_to_edit.status_code, 404)
+
+
+

@@ -23,6 +23,7 @@ import calendar
 from .models import *
 from .utils import Calendar
 from .forms import EventForm
+from django.http import HttpResponseNotFound
 import geocoder
 
 class CalendarView(generic.ListView):
@@ -66,6 +67,8 @@ def event(request, event_id=None):
     instance = Event()
     if event_id:
         instance = get_object_or_404(Event, pk=event_id)
+        if instance.user != request.user:
+            return HttpResponseNotFound("You don't have access to this event.")
     else:
         instance = Event()
 
