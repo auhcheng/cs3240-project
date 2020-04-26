@@ -33,7 +33,7 @@ class NoteForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'New note'}),
             'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body',
-                                        'style': 'height: 10rem'}),
+                                        'style': 'height: 6rem'}),
         }
 
 class EventForm(forms.ModelForm):

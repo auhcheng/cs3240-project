@@ -162,12 +162,33 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
+@login_required
+def NotesPage(request):
+# if the form has been filled out and sent to us as a POST request
+    context = {}
+    if request.method == 'POST':
+        # read the form data from the POST request into a TodoFormText        
+        note_form = NoteForm(request.POST)        
+        if note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('/notes')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # render everything as normal                
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()   
+        return render(request, 'dashboard/note.html', context)
 
 @login_required
-def delete_note(request, note_id):
+def delete_note(request, note_id, redir):
     note = Note.objects.get(pk=note_id)
     note.delete()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
@@ -178,9 +199,9 @@ def delete_note_archive(request, note_id):
 
 
 @login_required
-def delete_note_all(request):
+def delete_note_all(request, redir):
     Note.objects.filter(user__exact=request.user, is_archived=False).delete()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
@@ -190,11 +211,11 @@ def delete_note_archive_all(request):
 
 
 @login_required
-def archive_note(request, note_id):
+def archive_note(request, note_id, redir):
     note = Note.objects.get(pk=note_id)
     note.is_archived = True
     note.save()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
