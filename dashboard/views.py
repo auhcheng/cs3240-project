@@ -142,7 +142,7 @@ def Dashboard(request):
         # we are getting this page as a GET request        
         # render everything as normal        
         city = request.user.profile.city_location
-        context = get_weather_context()d
+        context = get_weather_context()
         context['note_list'] = Note.objects.order_by('id')
         context['note_form'] = NoteForm()   
         return render(request, 'dashboard/dashboard.html', context)
