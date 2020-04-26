@@ -1,39 +1,45 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
 
-<div class="container">
-  <div class="d-flex justify-content-center">
-  {% if form.errors %}
-      {% for field in form %}
-          {% for error in field.errors %}
+{% if user == todo.user %}
+    <div class="container">
+      <div class="d-flex justify-content-center">
+      {% if form.errors %}
+          {% for field in form %}
+              {% for error in field.errors %}
+                  <div class="alert alert-danger">
+                      {{ field.label }} <strong>{{ error|escape }}</strong>
+                  </div>
+              {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
               <div class="alert alert-danger">
                   {{ field.label }} <strong>{{ error|escape }}</strong>
               </div>
           {% endfor %}
-      {% endfor %}
-      {% for error in form.non_field_errors %}
-          <div class="alert alert-danger">
-              {{ field.label }} <strong>{{ error|escape }}</strong>
-          </div>
-      {% endfor %}
-  {% endif %}
-
-  <form action="#" method="POST" role="form">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="task">Task</label>
-        <div class="input-group">{{ form.task }}</div>
+      {% endif %}
+      <form action="#" method="POST" role="form">
+        Currently editing {{ todo.task }}
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="task">Task</label>
+            <div class="input-group">{{ form.task }}</div>
+        </div>
+        <div class="form-group">
+            <label for="due">Due Date</label>
+            {{ form.due }}
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary mb-2" id="add-btn">Submit</button>
+            <a class="btn btn-danger mb-2" href="{% url 'del' form.instance.id %}">Delete task</a>
+            <a class='btn btn-{{ form.instance.complete|yesno:"warning,success" }} mb-2' href="{% url 'complete' form.instance.id %}">Mark as {{ form.instance.complete|yesno:"incomplete,complete" }}</a>
+        </div>
+      </form>
     </div>
-    <div class="form-group">
-        <label for="due">Due Date</label>
-        {{ form.due }}
     </div>
-    <div class="btn-group">
-        <button type="submit" class="btn btn-primary mb-2" id="add-btn">Submit</button>
-        <a class="btn btn-danger mb-2" href="{% url 'del' form.instance.id %}">Delete task</a>
-        <a class='btn btn-{{ form.instance.complete|yesno:"warning,success" }} mb-2' href="{% url 'complete' form.instance.id %}">Mark as {{ form.instance.complete|yesno:"incomplete,complete" }}</a>
+{% else %}
+    <div class="container">
+        This is not a task you made; please go back!
     </div>
-  </form>
-</div>
-</div>
+{% endif %}
 {% endblock %}

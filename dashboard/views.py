@@ -92,7 +92,7 @@ def edit_todo(request, todo_id=None):
         form.save()
         return HttpResponseRedirect(reverse('todolist'))
     
-    return render(request, 'dashboard/todo.html', {'form': form})
+    return render(request, 'dashboard/todo.html', {'form': form, 'todo': instance})
 
 def get_charlottesville_weather_context():
     url = 'http://api.openweathermap.org/data/2.5/weather?q={},{}&units=imperial&appid=c163a4ad293113133fd9322210f18836'

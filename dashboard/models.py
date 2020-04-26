@@ -26,7 +26,7 @@ def save_user_profile(sender, instance, **kwargs):
 class Todo(models.Model):
     task = models.CharField(max_length=50, default="")
     complete = models.BooleanField(default=False)
-    user = models.CharField(max_length=6, default="")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     due = models.DateTimeField(default=datetime.datetime(2020, 4, 22, 17, 46, 37, 900802, tzinfo=utc))
 
     def __str__(self):
