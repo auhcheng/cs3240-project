@@ -14,10 +14,10 @@ class Calendar(HTMLCalendar):
 		events_per_day = events.filter(start_time__day=day)
 		d = ''
 		for event in events_per_day:
-			d += f'<li> {event.get_html_url} </li>'
+			d += f'{event.get_html_url}'
 
 		if day != 0:
-			return f"<td><div style='width: 10vw; height: 12vh; overflow:auto;'>{day}<ul> {d} </ul></div></td>"
+			return f'<td><div style="width: 10vw; height: 12vh; overflow:auto;">{day} <div class="list-group">{d}</div> </div></td>'
 		return '<td><div style="width: 10vw; height: 12vh; overflow:auto;""></div></td>'
 
 	# formats a week as a tr
