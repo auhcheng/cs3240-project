@@ -13,14 +13,14 @@
     <div class="form-group">
       <div class="input-group">{{ note_form.body }}</div>
   </div>
-    <div class="btn-group">
-        <button type="submit" class="btn btn-primary mb-2" id="add-btn">Write note</button>
+    <div class="d-flex justify-content-between mb-2">
+      <button type="submit" class="btn btn-primary m-1" id="add-btn">Write note</button>
 
-        <!-- Go to archive -->
-        <a href="{% url 'archive' %}" type="button" class="btn btn-secondary mb-2" >Go to archive</a>
-        
-        <!-- Delete all unarchived notes -->
-        <a href="{% url 'delnoteall' %}" type="button" class="btn btn-danger mb-2" >Delete all unarchived notes</a>
+      <!-- Go to archive -->
+      <a href="{% url 'archive' %}" type="button" class="btn btn-secondary m-1" >Go to archive</a>
+      
+      <!-- Delete all unarchived notes -->
+      <a href="{% url 'delnoteall' 'notes' %}" type="button" class="btn btn-danger m-1" >Delete all unarchived notes</a>
     </div>
   </form>
 </div>
@@ -30,13 +30,13 @@
       {% for note in note_list %}
         {% if user == note.user %}
             {% if not note.is_archived %}
-              <div class="card bg-light m-3" style="max-width: 18rem;">
+              <div class="card bg-light m-2" style="max-width: 18rem;">
                 <div class="card-body">
                   <h5 class="card-title">{{ note.title }}</h5>
                   <p class="card-text">{{ note.body }}</p>
-                  <div class="d-flex align-items-end">
-                    <a href="{% url 'archivenote' note.id %}" type="button" class="btn" >Archive</a>
-                    <a href="{% url 'delnote' note.id %}" type="button" class="btn" >Delete</a>
+                  <div class="d-flex">
+                    <a href="{% url 'archivenote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Archive</a>
+                    <a href="{% url 'delnote' note.id 'notes' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Delete</a>
                   </div>
                 </div>
               </div>

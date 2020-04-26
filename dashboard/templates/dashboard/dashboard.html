@@ -1,10 +1,11 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
-<div class="container">
-  <div class="row d-flex justify-content-between">  
-  <!-- Note Form -->
-  <div class = "column">
-  <div>
+  <div class="row pl-5 pr-5">
+  
+  <div class="col-6 overflow-auto" style="max-height: 100vh">
+  <div class="d-flex justify-content-center">
+
+    <!-- Note Form -->
     <form action="#" method="POST" role="form">
       {% csrf_token %}
       <div class="form-group">
@@ -13,30 +14,30 @@
       <div class="form-group">
         <div class="input-group">{{ note_form.body }}</div>
     </div>
-      <div class="btn-group">
-          <button type="submit" class="btn btn-primary mb-2" id="add-btn" style="margin: 5px">Write note</button>
+      <div class="d-flex justify-content-between mb-2">
+          <button type="submit" class="btn btn-primary m-1" id="add-btn">Write note</button>
   
           <!-- Go to archive -->
-          <a href="{% url 'archive' %}" type="button" class="btn btn-secondary mb-2" style="margin: 5px">Go to archive</a>
+          <a href="{% url 'archive' %}" type="button" class="btn btn-secondary m-1" >Go to archive</a>
           
           <!-- Delete all unarchived notes -->
-          <a href="{% url 'delnoteall' %}" type="button" class="btn btn-danger mb-2" style="margin: 5px">Delete all unarchived notes</a>
+          <a href="{% url 'delnoteall' 'dashboard' %}" type="button" class="btn btn-danger m-1" >Delete all unarchived notes</a>
       </div>
     </form>
   </div>
-
-  <!-- Display Notes -->  
-    <div class="overflow-auto" style="height:300px; margin-top: 20px;">
+  
+    <!-- Display Notes -->
+  <div class="row">
     {% for note in note_list %}
       {% if user == note.user %}
           {% if not note.is_archived %}
-            <div class="card bg-light m-3" style="max-width: 18rem;">
+            <div class="card bg-light m-2" style="max-width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">{{ note.title }}</h5>
                 <p class="card-text">{{ note.body }}</p>
-                <div class="d-flex align-items-end">
-                  <a href="{% url 'archivenote' note.id %}" type="button" class="btn" >Archive</a>
-                  <a href="{% url 'delnote' note.id %}" type="button" class="btn" >Delete</a>
+                <div class="d-flex">
+                  <a href="{% url 'archivenote' note.id 'dashboard' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Archive</a>
+                  <a href="{% url 'delnote' note.id 'dashboard' %}" type="button" class="btn-sm flex-shrink text-secondary" style="text-decoration: none">Delete</a>
                 </div>
               </div>
             </div>
@@ -45,8 +46,9 @@
     {% endfor %}
 </div>
 </div>
-
-  <div class="card" style="width: 25rem; height: 15rem;">
+<div class="col-6 overflow-auto" style="max-height: 100vh">
+  <div class="flex-d align-items-center justify-content-center">
+  <div class="card mx-auto" style="width: 25rem; height: 13rem;">
     <div class="card-header">Weather</div>
     <div class="card-body">
     <div class="media">
@@ -55,10 +57,13 @@
             <h3 class="mt-0">{{ city_weather.city }}</h3>
             <p class="font-weight-light">{{ city_weather.temperature }}° F</p>
             <p class="font-weight-light">{{ city_weather.description }}</p>
+            {% if not city_found %}
+              <p class="font-weight-light text-warning">Sorry, we couldn't find the weather from your location.</p>
+            {% endif %}
         </div>
     </div>
   </div>
 </div>
 </div>
-</div>  
+</div>
 {% endblock %}

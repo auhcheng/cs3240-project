@@ -11,8 +11,6 @@ from django.utils import timezone
 class Profile(models.Model):
     user = models.OneToOneField(User, unique=True, null=False, db_index=True, on_delete=models.CASCADE)
     preferred_name = models.CharField(max_length=30, blank=True)
-    city_location = models.CharField(max_length=30, blank=True)
-
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -56,4 +54,4 @@ class Event(models.Model):
     @property
     def get_html_url(self):
         url = reverse('event_edit', args=(self.id,))
-        return f'<a href="{url}"> {self.title} </a>'
+        return f'<a class="pl-2" href="{url}"> {self.title} </a>'

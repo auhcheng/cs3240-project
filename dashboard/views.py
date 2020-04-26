@@ -23,6 +23,8 @@ import calendar
 from .models import *
 from .utils import Calendar
 from .forms import EventForm
+from django.http import HttpResponseNotFound
+import geocoder
 
 
 class CalendarView(generic.ListView):
@@ -30,13 +32,13 @@ class CalendarView(generic.ListView):
     template_name = 'dashboard/calendar.html'
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
+        return Event.objects.filter(user=self.request.user)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         d = get_date(self.request.GET.get('month', None))
         cal = Calendar(d.year, d.month)
-        html_cal = cal.formatmonth(withyear=True)
+        html_cal = cal.formatmonth(events=self.get_queryset(), withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
@@ -66,6 +68,8 @@ def event(request, event_id=None):
     instance = Event()
     if event_id:
         instance = get_object_or_404(Event, pk=event_id)
+        if instance.user != request.user:
+            return HttpResponseNotFound("You don't have access to this event.")
     else:
         instance = Event()
 
@@ -90,30 +94,35 @@ def edit_todo(request, todo_id=None):
     
     return render(request, 'dashboard/todo.html', {'form': form})
 
-def get_weather_context(city):
-    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
-    
-    try:
-        r = requests.get(url.format(city)).json()
-        city_weather = {
-            'city': city,
-            'temperature': r['main']['temp'],
-            'description': r['weather'][0]['description'],
-            'icon': r['weather'][0]['icon'],
-        }
-    except KeyError:
-        city = "Charlottesville"
-        r = requests.get(url.format(city)).json()
-        city_weather = {
-            'city': city,
-            'temperature': r['main']['temp'],
-            'description': r['weather'][0]['description'],
-            'icon': r['weather'][0]['icon'],
-        }
-    
-
-    context = {'city_weather': city_weather}
+def get_charlottesville_weather_context():
+    url = 'http://api.openweathermap.org/data/2.5/weather?q={},{}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+    r = requests.get(url.format('Charlottesville', 'Virginia')).json()
+    city_weather = {
+                'city': 'Charlottesville',
+                'temperature': r['main']['temp'],
+                'description': r['weather'][0]['description'],
+                'icon': r['weather'][0]['icon'],
+            }
+    context = {'city_weather': city_weather, 'city_found': False}
     return context
+
+def get_weather_context():
+    try:
+        g = geocoder.ip('me')
+        lat, lng = g.latlng
+        url = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+        r = requests.get(url.format(lat, lng)).json()
+        city_weather = {
+                    'city': r['name'],
+                    'temperature': r['main']['temp'],
+                    'description': r['weather'][0]['description'],
+                    'icon': r['weather'][0]['icon'],
+                }
+        
+        context = {'city_weather': city_weather, 'city_found': True}
+        return context
+    except:
+        return get_charlottesville_weather_context()
 
 
 @login_required
@@ -132,8 +141,7 @@ def Dashboard(request):
     else:
         # we are getting this page as a GET request        
         # render everything as normal        
-        city = request.user.profile.city_location
-        context = get_weather_context(city)
+        context = get_weather_context()
         context['note_list'] = Note.objects.order_by('id')
         context['note_form'] = NoteForm()   
         return render(request, 'dashboard/dashboard.html', context)
@@ -154,12 +162,33 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
+@login_required
+def NotesPage(request):
+# if the form has been filled out and sent to us as a POST request
+    context = {}
+    if request.method == 'POST':
+        # read the form data from the POST request into a TodoFormText        
+        note_form = NoteForm(request.POST)        
+        if note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('/notes')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        # we are getting this page as a GET request
+
+        # render everything as normal                
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()   
+        return render(request, 'dashboard/note.html', context)
 
 @login_required
-def delete_note(request, note_id):
+def delete_note(request, note_id, redir):
     note = Note.objects.get(pk=note_id)
     note.delete()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
@@ -170,9 +199,9 @@ def delete_note_archive(request, note_id):
 
 
 @login_required
-def delete_note_all(request):
+def delete_note_all(request, redir):
     Note.objects.filter(user__exact=request.user, is_archived=False).delete()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
@@ -182,11 +211,11 @@ def delete_note_archive_all(request):
 
 
 @login_required
-def archive_note(request, note_id):
+def archive_note(request, note_id, redir):
     note = Note.objects.get(pk=note_id)
     note.is_archived = True
     note.save()
-    return redirect("/dashboard")
+    return redirect(redir)
 
 
 @login_required
