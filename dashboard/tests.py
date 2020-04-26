@@ -2,7 +2,7 @@ from django.test import TestCase
 from .views import get_weather_context, add_todo, complete_todo, delete_complete, delete_all, Dashboard
 
 from .forms import TodoForm
-from .models import Todo
+from .models import Todo, Event
 import datetime, pytz
 from django.utils import timezone
 
@@ -13,25 +13,20 @@ from django.test.client import Client
 class DashboardTests(TestCase):
 
     def test_weather_is_consistent(self):
-        context1 = get_weather_context('Virginia Beach')
-        context2 = get_weather_context('Virginia Beach')
-
+        context1 = get_weather_context()
+        context2 = get_weather_context()
         self.assertEqual(context1, context2)
     
     def test_weather_context_is_dict(self):
-        context = get_weather_context('Virginia Beach')
+        context = get_weather_context()
         self.assertIsInstance(context, dict)
     
-    def test_weather_city_is_Charlottesville(self):
-        city_weather = get_weather_context('asdjdjks')['city_weather']
-        self.assertEqual(city_weather['city'], 'Charlottesville')
-    
     def test_weather_temperature_is_number(self):
-        city_weather = get_weather_context('Charlottesville')['city_weather']
+        city_weather = get_weather_context()['city_weather']
         self.assertIsInstance(city_weather['temperature'], float)
     
     def test_weather_description_is_string(self):
-        city_weather = get_weather_context('Charlottesville')['city_weather']
+        city_weather = get_weather_context()['city_weather']
         self.assertIsInstance(city_weather['description'], str)
 
     # Below tests are for the todo model and task list functionality
@@ -134,3 +129,37 @@ class DashboardTests(TestCase):
         task_count = Todo.objects.count()
         Todo.objects.filter(user__exact='te1st').delete()
         self.assertEqual(Todo.objects.count(), task_count - 1)
+
+    def test_login(self):
+        c = Client()
+        user = User(username='testuser')
+        user.save()
+        not_logged_in = c.get('/')
+
+        # we should be redirected
+        self.assertEqual(not_logged_in.status_code, 302) # 302 means redirect
+        self.assertEqual(not_logged_in.url, '/account/login/?next=/')
+        
+        c.force_login(user)
+        logged_in = c.get('/dashboard/')
+        self.assertEqual(logged_in.status_code, 200) # 200 means success
+    
+    def test_events_are_private(self):
+        user1 = User(username='testuser1'); user1.save()
+        user2 = User(username='testuser2'); user2.save()
+        e = Event.objects.create(title='', description='', start_time=datetime.datetime.now(), end_time=datetime.datetime.now(), user=user1)
+        event_id = e.pk
+        e.save()
+
+        c1 = Client()
+        c1.force_login(user1)
+        try_to_edit = c1.get(reverse('event_edit', args=(event_id,)))
+        self.assertEqual(try_to_edit.status_code, 200)
+
+        c2 = Client()
+        c2.force_login(user2)
+        try_to_edit = c2.get(reverse('event_edit', args=(event_id,)))
+        self.assertEqual(try_to_edit.status_code, 404)
+
+
+
