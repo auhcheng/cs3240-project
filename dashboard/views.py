@@ -26,6 +26,7 @@ from .forms import EventForm
 from django.http import HttpResponseNotFound
 import geocoder
 
+
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'dashboard/calendar.html'
@@ -128,13 +129,85 @@ def get_weather_context():
 def Dashboard(request):
     # if the form has been filled out and sent to us as a POST request
     if request.method == 'POST':
-        return HttpResponseRedirect("/")
+        # read the form data from the POST request into a TodoFormText        
+        note_form = NoteForm(request.POST)        
+        if note_form.is_valid():
+            note = note_form.save(commit=False)
+            note.user = request.user
+            note.save()
+            return HttpResponseRedirect('/dashboard')            
+        else:
+            messages.error(request, ('Please correct the error below.'))        
     else:
         # we are getting this page as a GET request        
-        # render everything as normal
-        context = get_weather_context()
+        # render everything as normal        
+        city = request.user.profile.city_location
+        context = get_weather_context()d
+        context['note_list'] = Note.objects.order_by('id')
+        context['note_form'] = NoteForm()   
         return render(request, 'dashboard/dashboard.html', context)
 
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if profile_form.is_valid():
+            profile_form.save()
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'dashboard/profile.html', {
+        'profile_form': profile_form
+    })
+
+
+@login_required
+def delete_note(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.delete()
+    return redirect("/dashboard")
+
+
+@login_required
+def delete_note_archive(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.delete()
+    return redirect("/archive")
+
+
+@login_required
+def delete_note_all(request):
+    Note.objects.filter(user__exact=request.user, is_archived=False).delete()
+    return redirect("/dashboard")
+
+
+@login_required
+def delete_note_archive_all(request):
+    Note.objects.filter(user__exact=request.user, is_archived=True).delete()
+    return redirect("/archive")
+
+
+@login_required
+def archive_note(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.is_archived = True
+    note.save()
+    return redirect("/dashboard")
+
+
+@login_required
+def unarchive_note(request, note_id):
+    note = Note.objects.get(pk=note_id)
+    note.is_archived = False
+    note.save()
+    return redirect("/archive")
+
+def ArchivePage(request):
+    context = {'note_list': Note.objects.order_by('id')}
+    return render(request, 'dashboard/notearchive.html', context)
 
 @login_required
 def TodosPage(request):
@@ -166,50 +239,6 @@ def TodosPage(request):
         context['todo_form'] = todo_form          
         return render(request, 'dashboard/todolist.html', context)
 
-@login_required
-@transaction.atomic
-def update_profile(request):
-    if request.method == 'POST':
-        profile_form = ProfileForm(request.POST, instance=request.user.profile)
-        if profile_form.is_valid():
-            profile_form.save()
-            return HttpResponseRedirect('/')
-        else:
-            messages.error(request, ('Please correct the error below.'))
-    else:
-        profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'dashboard/profile.html', {
-        'profile_form': profile_form
-    })
-
-
-@login_required
-def NotesPage(request):
-# if the form has been filled out and sent to us as a POST request
-    context = {}
-    if request.method == 'POST':
-        # read the form data from the POST request into a TodoFormText        
-        note_form = NoteForm(request.POST)        
-        if note_form.is_valid():
-            note = note_form.save(commit=False)
-            note.user = request.user
-            note.save()
-            return HttpResponseRedirect('/notes')
-        else:
-            messages.error(request, ('Please correct the error below.'))
-    else:
-        # we are getting this page as a GET request
-
-        # render everything as normal                
-        context['note_list'] = Note.objects.order_by('id')
-        context['note_form'] = NoteForm()   
-        return render(request, 'dashboard/note.html', context)
-
-
-def ArchivePage(request):
-    context = {'note_list': Note.objects.order_by('id')}
-    return render(request, 'dashboard/notearchive.html', context)
-
 
 @login_required
 def add_todo(request):
@@ -237,7 +266,6 @@ def complete_todo(request, todo_id):
 
     return redirect("/todos")
 
-
 @login_required
 def delete(request, todo_id):
     todo = Todo.objects.get(pk=todo_id)
@@ -255,48 +283,6 @@ def delete_complete(request):
 def delete_all(request):
     Todo.objects.filter(user__exact=request.user).delete()
     return redirect("/todos")
-
-
-@login_required
-def delete_note(request, note_id):
-    note = Note.objects.get(pk=note_id)
-    note.delete()
-    return redirect("/notes")
-
-
-@login_required
-def delete_note_archive(request, note_id):
-    note = Note.objects.get(pk=note_id)
-    note.delete()
-    return redirect("/archive")
-
-
-@login_required
-def delete_note_all(request):
-    Note.objects.filter(user__exact=request.user, is_archived=False).delete()
-    return redirect("/notes")
-
-
-@login_required
-def delete_note_archive_all(request):
-    Note.objects.filter(user__exact=request.user, is_archived=True).delete()
-    return redirect("/archive")
-
-
-@login_required
-def archive_note(request, note_id):
-    note = Note.objects.get(pk=note_id)
-    note.is_archived = True
-    note.save()
-    return redirect("/notes")
-
-
-@login_required
-def unarchive_note(request, note_id):
-    note = Note.objects.get(pk=note_id)
-    note.is_archived = False
-    note.save()
-    return redirect("/archive")
 
 
 def Logout(request):
