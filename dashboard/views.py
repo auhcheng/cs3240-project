@@ -30,13 +30,13 @@ class CalendarView(generic.ListView):
     template_name = 'dashboard/calendar.html'
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
+        return Event.objects.filter(user=self.request.user)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         d = get_date(self.request.GET.get('month', None))
         cal = Calendar(d.year, d.month)
-        html_cal = cal.formatmonth(withyear=True)
+        html_cal = cal.formatmonth(events=self.get_queryset(), withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
