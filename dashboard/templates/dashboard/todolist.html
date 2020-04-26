@@ -12,15 +12,15 @@
   <div class="form-group"><div class="input-group">{{ todo_form.task }}</div></div>
   <div class="form-group">{{ todo_form.due }}</div>
   <div class="btn-group mb-3">
-      <button type="submit" class="btn btn-primary" id="add-btn">Add task</button>
-      <a href="{% url 'delcomp' %}" type="button" class="btn btn-secondary">Delete complete tasks</a>
-      <a href="{% url 'delall' %}" type="button" class="btn btn-danger">Delete all tasks</a>
+      <button type="submit" class="btn btn-primary" id="add-btn" style="margin: 5px">Add task</button>
+      <a href="{% url 'delcomp' %}" type="button" class="btn btn-secondary" style="margin: 5px">Delete complete tasks</a>
+      <a href="{% url 'delall' %}" type="button" class="btn btn-danger" style="margin: 5px">Delete all tasks</a>
   </div>
 </form>
 </div>
 
 <!-- Todo List -->
-<div class="list-group">
+<div class="list-group overflow-auto" style="height:450px">
   {% for todo in todo_list %}
       {% if user.username == todo.user %}
       <div class="list-group-item list-group-item-action d-flex w-100 justify-content-between align-items-center">
