@@ -106,23 +106,38 @@ def get_charlottesville_weather_context():
     context = {'city_weather': city_weather, 'city_found': False}
     return context
 
-def get_weather_context():
-    try:
-        g = geocoder.ip('me')
-        lat, lng = g.latlng
-        url = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
-        r = requests.get(url.format(lat, lng)).json()
-        city_weather = {
-                    'city': r['name'],
-                    'temperature': r['main']['temp'],
-                    'description': r['weather'][0]['description'],
-                    'icon': r['weather'][0]['icon'],
-                }
-        
-        context = {'city_weather': city_weather, 'city_found': True}
-        return context
-    except:
-        return get_charlottesville_weather_context()
+def get_weather_context(zip_code):
+    if zip_code:
+        try:
+            url = 'http://api.openweathermap.org/data/2.5/weather?zip={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+            r = requests.get(url.format(zip_code)).json()
+            city_weather = {
+                            'city': r['name'],
+                            'temperature': r['main']['temp'],
+                            'description': r['weather'][0]['description'],
+                            'icon': r['weather'][0]['icon'],
+                        }
+            context = {'city_weather': city_weather, 'city_found': True}
+            return context
+        except:
+            return get_charlottesville_weather_context()
+    else:
+        try:
+            g = geocoder.ip('me')
+            lat, lng = g.latlng
+            url = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units=imperial&appid=c163a4ad293113133fd9322210f18836'
+            r = requests.get(url.format(lat, lng)).json()
+            city_weather = {
+                        'city': r['name'],
+                        'temperature': r['main']['temp'],
+                        'description': r['weather'][0]['description'],
+                        'icon': r['weather'][0]['icon'],
+                    }
+            
+            context = {'city_weather': city_weather, 'city_found': True}
+            return context
+        except:
+            return get_charlottesville_weather_context()
 
 
 @login_required
@@ -141,7 +156,7 @@ def Dashboard(request):
     else:
         # we are getting this page as a GET request        
         # render everything as normal        
-        context = get_weather_context()
+        context = get_weather_context(request.user.profile.zip_code)
         context['note_list'] = Note.objects.order_by('id').filter(user=request.user, is_archived=False)
         context['note_form'] = NoteForm()
         context['todo_list_due'] = Todo.objects.order_by('due').filter(user=request.user)

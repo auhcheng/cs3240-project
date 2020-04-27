@@ -35,13 +35,13 @@
             <h3 class="mt-0">{{ city_weather.city }}</h3>
             <p class="font-weight-light">{{ city_weather.temperature }}° F</p>
             <p class="font-weight-light">{{ city_weather.description }}</p>
-            {% if not city_found %}
-              <p class="font-weight-light text-warning">Sorry, we couldn't find the weather from your location.</p>
-            {% endif %}
         </div>
     </div>
   </div>
 </div>
+{% if not city_found %}
+  <p class="font-weight-light text-warning">Sorry, we couldn't find the weather from your location. Make sure your ZIP code is formatted correctly. Leave ZIP code blank if you want weather by IP.</p>
+{% endif %}
 <hr></hr>
 <div class="overflow-auto pl-1" style="max-height: 55vh">
 
