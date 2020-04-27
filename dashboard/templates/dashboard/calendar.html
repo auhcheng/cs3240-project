@@ -1,10 +1,14 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
+<div class = 'd-flex justify-content-center'>
 <div class="clearfix">
 	<a class="btn btn-info left" href="{% url 'calendar' %}?{{ prev_month }}"> Previous Month </a>
     <a class="btn btn-info right" href="{% url 'calendar' %}?{{ next_month }}"> Next Month </a>
     <a class="btn btn-info right" href="{% url 'event_new' %}"> New Event </a>
 </div>
+</div>
 
+<div class= 'd-flex justify-content-center'>
 {{ calendar }}
+</div>
 {% endblock %}

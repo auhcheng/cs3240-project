@@ -3,34 +3,21 @@ from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
 
-# urlpatterns = [
-#     url(r'^$', views.Dashboard, name="dashboard"),
-#     url(r'^todos', views.TodoTab, name='todo'),
-#     url(r'^notes', views.NotesTab, name='note'),
-#     url(r'^profile/$', views.update_profile, name="profile"),
-#     url(r'^account/logout/$', views.Logout, name="logout"),
-#     path('task/<todo_id>/complete', views.complete_todo, name="complete"),
-#     path('delcomp', views.delete_complete, name="delcomp"),
-#     path('delall', views.delete_all, name="delall"),
-#     path('del/<todo_id>', views.delete, name="del"),
-#     path('task/<todo_id>', views.TaskPage, name="taskpage")
-# ]
-
 urlpatterns = [
     url(r'^$', views.Dashboard, name="dashboard"),
     url(r'^todos', views.TodosPage, name='todolist'),
-    url(r'^notes', views.NotesPage, name='note'),
+    url(r'^notes', views.NotesPage, name='notes'),
     url(r'^profile/$', views.update_profile, name="profile"),
     url(r'^account/logout/$', views.Logout, name="logout"),
-    path('task/<todo_id>/complete', views.complete_todo, name="complete"),
+    path('task/<todo_id>/complete/<redir>', views.complete_todo, name="complete"),
     path('delcomp', views.delete_complete, name="delcomp"),
     path('delall', views.delete_all, name="delall"),
-    path('del/<todo_id>', views.delete, name="del"),
-    path('delnote/<note_id>', views.delete_note, name='delnote'),
+    path('del/<todo_id>/<redir>', views.delete, name="del"),
+    path('delnote/<note_id>/<redir>', views.delete_note, name='delnote'),
     path('delnotearchive/<note_id>', views.delete_note_archive, name='delnotearchive'),
-    path('delnoteall', views.delete_note_all, name='delnoteall'),
+    path('delnoteall/<redir>', views.delete_note_all, name='delnoteall'),
     path('delnoteallarchive', views.delete_note_archive_all, name='delnoteallarchive'),
-    path('archivenote/<note_id>', views.archive_note, name='archivenote'),
+    path('archivenote/<note_id>/<redir>', views.archive_note, name='archivenote'),
     path('unarchivenote/<note_id>', views.unarchive_note, name='unarchivenote'),
     path('archive', views.ArchivePage, name='archive'),
     url(r'^calendar/$', login_required(views.CalendarView.as_view()), name='calendar'),

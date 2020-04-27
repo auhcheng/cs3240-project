@@ -9,11 +9,11 @@ from .widgets import BootstrapDateTimePickerInput
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('preferred_name', 'city_location')
+        fields = ('preferred_name',)
         widgets = {
             'preferred_name': forms.TextInput(attrs={'placeholder': 'Preferred name', 'class': 'form-control'}),
-            'city_location': forms.TextInput(attrs={'placeholder': 'City', 'class': 'form-control'}),
         }
+
 
 class TodoForm(forms.ModelForm):
     due = forms.DateTimeField(
@@ -27,6 +27,7 @@ class TodoForm(forms.ModelForm):
             'task': forms.TextInput(attrs={'placeholder': 'New task', 'class': 'form-control'}),
         }
 
+
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
@@ -34,8 +35,9 @@ class NoteForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'New note'}),
             'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Body',
-                                        'style': 'height: 10rem'}),
+                                        'style': 'height: 6rem'}),
         }
+
 
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(
@@ -54,3 +56,7 @@ class EventForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search by keyword'}))

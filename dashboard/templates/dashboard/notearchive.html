@@ -2,12 +2,12 @@
 {% block content %}
 
 <div class="container">
-  <div class="btn-group">
+  <div class="d-flex justify-content-center mb-2">
     <!-- Go back to regular note list-->
-    <a href="{% url 'note' %}" type="button" class="btn btn-secondary mb-2" >Back to unarchived notes</a>
+    <a href="{% url 'notes' %}" type="button" class="btn btn-secondary m-1">Back to unarchived notes</a>
 
     <!-- Delete all archived notes -->
-    <a href="{% url 'delnoteallarchive' %}" type="button" class="btn btn-warning mb-2" >Delete all archived notes</a>
+    <a href="{% url 'delnoteallarchive' %}" type="button" class="btn btn-warning m-1" >Delete all archived notes</a>
   </div>
   
 
@@ -21,7 +21,7 @@
                   <h5 class="card-title">{{ note.title }}</h5>
                   <p class="card-text">{{ note.body }}</p>
                   <a href="{% url 'unarchivenote' note.id%}" type="button" class="btn btn-default" >Unarchive</a>
-                  <a href="{% url 'delnotearchive' note.id %}" type="button" class="btn btn-default" >Delete</a>
+                  <a href="{% url 'delnotearchive' note.id %}"  type="button" class="btn btn-default" >Delete</a>
                 </div>
               </div>
             {% endif %}
