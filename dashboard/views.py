@@ -143,7 +143,8 @@ def Dashboard(request):
         # render everything as normal        
         context = get_weather_context()
         context['note_list'] = Note.objects.order_by('id')
-        context['note_form'] = NoteForm()   
+        context['note_form'] = NoteForm()
+        context['todo_list_due'] = Todo.objects.order_by('due')
         return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -304,18 +305,18 @@ def add_todo(request):
         return render(request, 'dashboard/todolist.html', context)
 
 @login_required
-def complete_todo(request, todo_id):
+def complete_todo(request, todo_id, redir):
     todo = Todo.objects.get(pk=todo_id)
     todo.complete = not todo.complete
     todo.save()
 
-    return redirect("/todos")
+    return redirect(redir)
 
 @login_required
-def delete(request, todo_id):
+def delete(request, todo_id, redir):
     todo = Todo.objects.get(pk=todo_id)
     todo.delete()
-    return redirect("/todos")
+    return redirect(redir)
 
 
 @login_required
