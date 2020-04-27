@@ -37,17 +37,21 @@ class DashboardTests(TestCase):
     def test_valid_todo_textdate_form(self):
         form = TodoForm({'task': "task", "due": "05/01/2020 12:00"})
         self.assertTrue(form.is_valid())
-        task = form.save()
+        task = form.save(commit=False)
+        user = User(username='testuser'); user.save()
+        task.user = user
+        task.save()
         self.assertEqual(task.task, "task")
-        task.user = "user"
-        task = form.save()
-        self.assertEqual(task.user, "user")
+        self.assertEqual(task.user, user)
 
     # checks if updating a task's text works
     def test_valid_todo_text_form(self):
         form = TodoForm({'task': "task", "due": "05/01/2020 12:00"})
         self.assertTrue(form.is_valid())
-        task = form.save()
+        task = form.save(commit=False)
+        user = User(username='testuser'); user.save()
+        task.user = user
+        task.save()
         text_form = TodoForm({'task': "altered task", "due": "05/01/2020 12:00"}, instance=task)
         text_form.save()
         self.assertEqual(task.task, "altered task")
@@ -83,14 +87,16 @@ class DashboardTests(TestCase):
 
     # adds task to database
     def test_add_task_database(self):
+        user = User(username='testuser'); user.save()
         task_count = Todo.objects.count()
-        Todo.objects.create(task='test')
+        Todo.objects.create(task='test', user=user)
         tasks = Todo.objects.all()
         self.assertEqual(Todo.objects.count(), task_count + 1)
 
     # changes the value of a task to complete (based on logic from the complete_todo view)
     def test_complete_task_database(self):
-        t = Todo.objects.create(task='test')
+        user = User(username='testuser'); user.save()
+        t = Todo.objects.create(task='test', user=user)
         t.complete = True
         t.save()
         self.assertTrue(Todo.objects.get(task='test').complete)
@@ -100,34 +106,40 @@ class DashboardTests(TestCase):
 
     # deletes a single task
     def test_delete_task_database(self):
-        t = Todo.objects.create(task='test 1', user='te1st')
+        user1 = User(username='testuser1'); user1.save()
+        user2 = User(username='testuser2'); user2.save()
+        t = Todo.objects.create(task='test 1', user=user1)
         num = t.id
-        t = Todo.objects.create(task='test 2', user='te2st')
-        task_count = Todo.objects.count();
+        t = Todo.objects.create(task='test 2', user=user2)
+        task_count = Todo.objects.count()
         Todo.objects.filter(pk=num).delete()
         self.assertEqual(Todo.objects.count(), task_count - 1)
 
     # deletes all complete tasks for a user
     def test_delete_complete_database(self):
-        Todo.objects.create(task='incomplete', user='te1st')
-        t = Todo.objects.create(task='complete', user='te1st')
+        user1 = User(username='testuser1'); user1.save()
+        user2 = User(username='testuser2'); user2.save()
+        Todo.objects.create(task='incomplete', user=user1)
+        t = Todo.objects.create(task='complete', user=user1)
         t.complete = True
         t.save()
-        Todo.objects.create(task='incomplete', user='te2st')
-        t = Todo.objects.create(task='complete', user='te2st')
+        Todo.objects.create(task='incomplete', user=user2)
+        t = Todo.objects.create(task='complete', user=user2)
         t.complete = True
         t.save()
         task_count = Todo.objects.count()
-        Todo.objects.filter(complete__exact=True, user__exact='te1st').delete()
+        Todo.objects.filter(complete__exact=True, user__exact=user1).delete()
         self.assertEqual(Todo.objects.count(), task_count - 1)
 
     # deletes all tasks for a user
     def test_delete_all_database(self):
-        Todo.objects.create(task='test 1', user='te1st')
-        Todo.objects.create(task='test 2', user='te2st')
-        Todo.objects.create(task='test 3', user='te2st')
+        user1 = User(username='testuser1'); user1.save()
+        user2 = User(username='testuser2'); user2.save()
+        Todo.objects.create(task='test 1', user=user1)
+        Todo.objects.create(task='test 2', user=user2)
+        Todo.objects.create(task='test 3', user=user2)
         task_count = Todo.objects.count()
-        Todo.objects.filter(user__exact='te1st').delete()
+        Todo.objects.filter(user__exact=user1).delete()
         self.assertEqual(Todo.objects.count(), task_count - 1)
 
     def test_login(self):
@@ -160,6 +172,3 @@ class DashboardTests(TestCase):
         c2.force_login(user2)
         try_to_edit = c2.get(reverse('event_edit', args=(event_id,)))
         self.assertEqual(try_to_edit.status_code, 404)
-
-
-
