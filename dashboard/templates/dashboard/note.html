@@ -8,9 +8,14 @@
     <form action="/notes" method="POST" role="form">
       {% csrf_token %}
         <div class="form-group">
-          {{ search_form }}
-          <input type="submit" class="btn btn-primary-m1" value="Submit">
-<!--          <a href="{% url 'notes' %}" type="button" class="btn btn-secondary m-1"> Submit </a>-->
+          <div class="row">
+            <div class="input-group">
+              {{ search_form.search }}
+              <div class="input-group-append">
+                <input type="submit" class="btn btn-success" value="Go">
+              </div>
+            </div>
+          </div>
         </div>
     </form>
   </div>

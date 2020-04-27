@@ -59,4 +59,4 @@ class EventForm(forms.ModelForm):
 
 
 class SearchForm(forms.Form):
-    search = forms.CharField(required=False)
+    search = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search by keyword'}))
