@@ -258,18 +258,30 @@ def TodosPage(request):
 
             # set the user of this Todo to the current user
             todo.user = request.user
-
             todo.save()
+
+            # updates due date stuff
+            for todo in Todo.objects.all():
+                todo.current = timezone.localtime(timezone.now()+datetime.timedelta(hours=1))
+                todo.save()
+
+
             return HttpResponseRedirect('/todos')
         else:
             messages.error(request, ('Please correct the error below.'))
     else:
         # we are getting this page as a GET request
 
+        # updates due date stuff
+        for todo in Todo.objects.all():
+            todo.current = timezone.localtime(timezone.now()+datetime.timedelta(hours=1))
+            todo.save()
+
         # create a blank form
         todo_form = TodoForm()      
         # render everything as normal
         context['todo_list'] = Todo.objects.order_by('id')
+        context['todo_list_due'] = Todo.objects.order_by('due')
         context['todo_form'] = todo_form          
         return render(request, 'dashboard/todolist.html', context)
 
