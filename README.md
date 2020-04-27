@@ -58,4 +58,9 @@ Also should be currently deployed at https://project-101-node.herokuapp.com/
 - Make scheduling and organizing easy
 - Make the app easy to use in general
 
-I hope travis works..
+## Citations
+Much of the calendar was borrowed from https://github.com/huiwenhw/django-calendar, accessed April 15
+
+Weather was built with the help of https://www.youtube.com/watch?v=qCQGV7F7CUc, https://github.com/PrettyPrinted/weather_app_django, accessed Feb 17
+
+Datetime picker in Bootstrap uses Tempus Dominus at https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html, accessed April 15
