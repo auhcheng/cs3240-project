@@ -142,9 +142,9 @@ def Dashboard(request):
         # we are getting this page as a GET request        
         # render everything as normal        
         context = get_weather_context()
-        context['note_list'] = Note.objects.order_by('id')
+        context['note_list'] = Note.objects.order_by('id').filter(user=request.user, is_archived=False)
         context['note_form'] = NoteForm()
-        context['todo_list_due'] = Todo.objects.order_by('due')
+        context['todo_list_due'] = Todo.objects.order_by('due').filter(user=request.user)
         return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
@@ -184,7 +184,7 @@ def NotesPage(request):
             messages.error(request, 'Please correct the error below.')
 
         # render everything as normal
-        context['note_list'] = Note.objects.order_by('id')
+        context['note_list'] = Note.objects.order_by('id').filter(user=request.user, is_archived=False)
         context['note_form'] = NoteForm()
         context['search_form'] = SearchForm(request.POST)
         return render(request, 'dashboard/note.html', context)
@@ -281,7 +281,7 @@ def TodosPage(request):
         # create a blank form
         todo_form = TodoForm()      
         # render everything as normal
-        context['todo_list_due'] = Todo.objects.order_by('due')
+        context['todo_list_due'] = Todo.objects.order_by('due').filter(user=request.user)
         context['todo_form'] = todo_form
         return render(request, 'dashboard/todolist.html', context)
 

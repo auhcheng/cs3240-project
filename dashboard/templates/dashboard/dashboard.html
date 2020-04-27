@@ -4,7 +4,11 @@
   
   <div class="col-6 overflow-auto" style="max-height: 85vh">
     <h3>My to-dos</h3>
+    {% if not todo_list_due %}
+        <h6>You don't have any to-dos!</h6>
+      {% endif %}
     <div class="list-group mt-2">
+      
       {% for todo in todo_list_due %}
           {% if user == todo.user %}
               <div class="list-group-item list-group-item-action d-flex w-100 justify-content-between align-items-center">
@@ -42,12 +46,16 @@
 <div class="overflow-auto pl-1" style="max-height: 55vh">
 
 <h3>My Notes</h3>
+{% if not note_list %}
+        <h6>You don't have any notes!</h6>
+      {% endif %}
   <div class="d-flex justify-content-center">
 
   
   
     <!-- Display Notes -->
   <div class="row">
+    
     {% for note in note_list %}
       {% if user == note.user %}
           {% if not note.is_archived %}
