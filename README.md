@@ -1,5 +1,14 @@
 # Node
 
+## How to use
+
+Features:
+- Weather: shows the weather based on your location geocoded by ip
+- Profile: change your preferred name by clicking "Hello, <name>"
+- To-do list: mark todos as complete/incomplete, overdue tasks are colored red, sorted by due date, click on tasks to edit them
+- Notes: write notes, archive them, or delete them; search by keyword
+- Calendar: add and edit events
+
 To run the server locally, first run the following:
 
 ```
