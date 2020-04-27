@@ -280,9 +280,8 @@ def TodosPage(request):
         # create a blank form
         todo_form = TodoForm()      
         # render everything as normal
-        context['todo_list'] = Todo.objects.order_by('id')
         context['todo_list_due'] = Todo.objects.order_by('due')
-        context['todo_form'] = todo_form          
+        context['todo_form'] = todo_form
         return render(request, 'dashboard/todolist.html', context)
 
 
