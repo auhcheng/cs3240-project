@@ -64,3 +64,8 @@ Much of the calendar was borrowed from https://github.com/huiwenhw/django-calend
 Weather was built with the help of https://www.youtube.com/watch?v=qCQGV7F7CUc, https://github.com/PrettyPrinted/weather_app_django, accessed Feb 17
 
 Datetime picker in Bootstrap uses Tempus Dominus at https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html, accessed April 15
+
+
+```html
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+```
